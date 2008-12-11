@@ -1,6 +1,6 @@
 History.txt
 Manifest.txt
-README.rdoc
+README.markdown
 Rakefile
 lib/ezormocks.rb
 lib/ezormocks/ezormock.rb

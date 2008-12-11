@@ -20,8 +20,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 == FEATURES/PROBLEMS:
 
 * Currently just a gleam in my eye
-
-* Supports very simple stuff fro ActiveRecord / RSpec's mocks
+* Supports very simple stuff for ActiveRecord / RSpec's mocks
 
 == SYNOPSIS:
 
