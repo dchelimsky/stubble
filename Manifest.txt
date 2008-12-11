@@ -3,9 +3,8 @@ Manifest.txt
 README.rdoc
 Rakefile
 lib/ezormocks.rb
-script/console
-script/destroy
-script/generate
+lib/ezormocks/ezormock.rb
+spec/ezormocks/ezormock_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
 tasks/rspec.rake
