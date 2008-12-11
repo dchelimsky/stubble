@@ -31,23 +31,23 @@ The following examples will both pass if the controller's update action uses #fi
 * update_attributes
 * update_attributes!
 
-    describe "things" do
-      context "successful PUT"
-        it "redirects to the things index" do
-          ezormock(Thing)
-          post :update
-          response.should redirect_to(things_path)
-        end
-      end
+        describe "things" do
+          context "successful PUT"
+            it "redirects to the things index" do
+              ezormock(Thing)
+              post :update
+              response.should redirect_to(things_path)
+            end
+          end
 
-      context "successful PUT"
-        it "re-renders the edit page" do
-          ezormock(Thing, :savable => false)
-          post :update
-          response.should render_template('edit')
+          context "successful PUT"
+            it "re-renders the edit page" do
+              ezormock(Thing, :savable => false)
+              post :update
+              response.should render_template('edit')
+            end
+          end
         end
-      end
-    end
 
 ## REQUIREMENTS:
 
