@@ -1,6 +1,6 @@
 = ezormocks
 
-* http://github.com/dchelimsky/
+* http://github.com/dchelimsky/ezormocks
 
 == DESCRIPTION:
 
@@ -10,7 +10,8 @@ Pronounced "Easier Mocks", but contrived from Easy ORM Mocks
 
 == GOALS:
 
-Short term goal is to support ActiveRecord with Merb using RSpec's mocks because that's what we're using on the project I'm working on right now.
+Short term goal is to support ActiveRecord with RSpec's mocks because that's
+what we're using on the project I'm working on right now.
 
 Midterm goal is to evolve an ass-kickingly simple API to make it easier to mock and stub general concepts like the creation, saving and updating ORM models without worrying about the details of which specific methods are being called when.
 
@@ -20,7 +21,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
 * Currently just a gleam in my eye
 
-* Will soon support ActiveRecord / Merb / RSpec's mocks
+* Supports very simple stuff fro ActiveRecord / RSpec's mocks
 
 == SYNOPSIS:
 
@@ -52,11 +53,14 @@ end
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* activerecord
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+$ git clone git://github.com/dchelimsky/ezormock.git
+$ cd ezormock
+$ rake gem
+$ rake install_gem
 
 == LICENSE:
 
