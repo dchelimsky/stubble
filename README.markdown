@@ -24,7 +24,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
 ## SYNOPSIS:
 
-By default, ezormocks are findable, and savable.
+        By default, ezormocks are findable, and savable.
 
         The following examples will both pass if the controller's update action uses #find with any of:
 
