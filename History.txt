@@ -1,0 +1,4 @@
+== 0.0.1 - someday in yyyy-mm-dd format
+
+* 1 major enhancement:
+  * Initial release
