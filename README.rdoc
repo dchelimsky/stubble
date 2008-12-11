@@ -29,27 +29,27 @@ By default, ezormocks are findable, and savable.
 
 Both examples will pass if the controller's update action uses #find with any of:
 
-** update_attribute + (save || save!)
-** update_attributes
-** update_attributes!
+* update_attribute + (save || save!)
+* update_attributes
+* update_attributes!
 
-describe "things" do
-  context "successful PUT"
-    it "redirects to the things index" do
-      ezormock(Thing)
-      post :update
-      response.should redirect_to(things_path)
+  describe "things" do
+    context "successful PUT"
+      it "redirects to the things index" do
+        ezormock(Thing)
+        post :update
+        response.should redirect_to(things_path)
+      end
+    end
+
+    context "successful PUT"
+      it "re-renders the edit page" do
+        ezormock(Thing, :savable => false)
+        post :update
+        response.should render_template('edit')
+      end
     end
   end
-
-  context "successful PUT"
-    it "re-renders the edit page" do
-      ezormock(Thing, :savable => false)
-      post :update
-      response.should render_template('edit')
-    end
-  end
-end
 
 == REQUIREMENTS:
 
@@ -57,10 +57,10 @@ end
 
 == INSTALL:
 
-$ git clone git://github.com/dchelimsky/ezormock.git
-$ cd ezormock
-$ rake gem
-$ rake install_gem
+  $ git clone git://github.com/dchelimsky/ezormock.git
+  $ cd ezormock
+  $ rake gem
+  $ rake install_gem
 
 == LICENSE:
 
