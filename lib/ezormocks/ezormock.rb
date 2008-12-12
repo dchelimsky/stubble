@@ -13,8 +13,12 @@ module Ezormocks
         instance.stub!(method).and_raise(ActiveRecord::RecordInvalid.new(instance))
       end
     end
-    
-    klass.stub!(:find).and_return(instance)
+    [:find, :new].each do |method|
+      klass.stub!(method).and_return(instance)
+    end
+    [:all].each do |method|
+      klass.stub!(method).and_return([instance])
+    end
     instance
   end
 end
