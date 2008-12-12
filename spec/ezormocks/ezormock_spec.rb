@@ -18,6 +18,16 @@ describe "ezormock" do
       ExampleModel.all.should == [an_instance_of(Spec::Mocks::Mock)]
     end
   end
+  
+  context "creating" do
+    it "yields the instance" do
+      instance = nil
+      ezormock(ExampleModel) do |yielded_instance|
+        instance = yielded_instance
+      end
+      instance.should == an_instance_of(Spec::Mocks::Mock)
+    end
+  end
 
   describe "instances" do
     context "default (savable)" do

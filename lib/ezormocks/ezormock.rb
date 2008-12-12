@@ -19,6 +19,7 @@ module Ezormocks
     [:all].each do |method|
       klass.stub!(method).and_return([instance])
     end
+    yield instance if block_given?
     instance
   end
 end
