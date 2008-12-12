@@ -24,31 +24,31 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
 ## SYNOPSIS:
 
-        By default, ezormocks are findable, and savable.
+    By default, ezormocks are findable, and savable.
 
-        The following examples will both pass if the controller's update action uses #find with any of:
+    The following examples will both pass if the controller's update action uses #find with any of:
 
-        * update_attribute + (save || save!)
-        * update_attributes
-        * update_attributes!
+    * update_attribute + (save || save!)
+    * update_attributes
+    * update_attributes!
 
-        describe "things" do
-          context "successful PUT"
-            it "redirects to the things index" do
-              ezormock(Thing)
-              post :update
-              response.should redirect_to(things_path)
-            end
-          end
-
-          context "successful PUT"
-            it "re-renders the edit page" do
-              ezormock(Thing, :savable => false)
-              post :update
-              response.should render_template('edit')
-            end
-          end
+    describe "things" do
+      context "successful PUT"
+        it "redirects to the things index" do
+          ezormock(Thing)
+          post :update
+          response.should redirect_to(things_path)
         end
+      end
+
+      context "successful PUT"
+        it "re-renders the edit page" do
+          ezormock(Thing, :savable => false)
+          post :update
+          response.should render_template('edit')
+        end
+      end
+    end
 
 ## REQUIREMENTS:
 
@@ -56,10 +56,10 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
 ## INSTALL:
 
-  $ git clone git://github.com/dchelimsky/ezormock.git
-  $ cd ezormock
-  $ rake gem
-  $ rake install_gem
+    $ git clone git://github.com/dchelimsky/ezormock.git
+    $ cd ezormock
+    $ rake gem
+    $ rake install_gem
 
 ## LICENSE:
 
