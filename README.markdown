@@ -41,7 +41,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
         end
       end
 
-      context "successful PUT"
+      context "failed PUT"
         it "re-renders the edit page" do
           ezormock(Thing, :savable => false)
           post :update
