@@ -7,15 +7,16 @@ describe "ezormock" do
   describe "class methods" do
     it "stubs find on the class object, returning an ezomock instance" do
       ezormock(ExampleModel)
-      ExampleModel.find("37").should == an_instance_of(Spec::Mocks::Mock)
+      ExampleModel.find("37").should be_an_instance_of(Spec::Mocks::Mock)
     end
     it "stubs new on the class object, returning an ezomock instance" do
       ezormock(ExampleModel)
-      ExampleModel.new.should == an_instance_of(Spec::Mocks::Mock)
+      ExampleModel.new.should be_an_instance_of(Spec::Mocks::Mock)
     end
     it "stubs all on the class object, returning an ezomock instance in an array" do
       ezormock(ExampleModel)
-      ExampleModel.all.should == [an_instance_of(Spec::Mocks::Mock)]
+      ExampleModel.all.should have(1).element
+      ExampleModel.all.first.should be_an_instance_of(Spec::Mocks::Mock)
     end
   end
   
@@ -25,7 +26,7 @@ describe "ezormock" do
       ezormock(ExampleModel) do |yielded_instance|
         instance = yielded_instance
       end
-      instance.should == an_instance_of(Spec::Mocks::Mock)
+      instance.should be_an_instance_of(Spec::Mocks::Mock)
     end
   end
 
