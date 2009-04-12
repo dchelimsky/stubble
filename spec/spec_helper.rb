@@ -7,7 +7,7 @@ rescue LoadError
 end
 
 $:.unshift(File.dirname(__FILE__) + '/../lib')
-require 'ezormocks'
+require 'stubble'
 
 Spec::Runner.configure do |c|
   c.include(Ezormocks)

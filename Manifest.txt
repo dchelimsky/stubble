@@ -1,10 +1,9 @@
 History.txt
+lib/stubble.rb
 Manifest.txt
-README.markdown
 Rakefile
-lib/ezormocks.rb
-lib/ezormocks/ezormock.rb
-spec/ezormocks/ezormock_spec.rb
+README.markdown
 spec/spec.opts
 spec/spec_helper.rb
+spec/stubble_spec.rb
 tasks/rspec.rake

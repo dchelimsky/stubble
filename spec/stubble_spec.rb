@@ -1,20 +1,20 @@
-require File.join(File.dirname(__FILE__), "/../spec_helper")
+require File.join(File.dirname(__FILE__), "/spec_helper")
 
 class ExampleModel
 end
 
-describe "ezormock" do
+describe "stubble" do
   describe "class methods" do
     it "stubs find on the class object, returning an ezomock instance" do
-      ezormock(ExampleModel)
+      stubble(ExampleModel)
       ExampleModel.find("37").should be_an_instance_of(Spec::Mocks::Mock)
     end
     it "stubs new on the class object, returning an ezomock instance" do
-      ezormock(ExampleModel)
+      stubble(ExampleModel)
       ExampleModel.new.should be_an_instance_of(Spec::Mocks::Mock)
     end
     it "stubs all on the class object, returning an ezomock instance in an array" do
-      ezormock(ExampleModel)
+      stubble(ExampleModel)
       ExampleModel.all.should have(1).element
       ExampleModel.all.first.should be_an_instance_of(Spec::Mocks::Mock)
     end
@@ -23,7 +23,7 @@ describe "ezormock" do
   context "creating" do
     it "yields the instance" do
       instance = nil
-      ezormock(ExampleModel) do |yielded_instance|
+      stubble(ExampleModel) do |yielded_instance|
         instance = yielded_instance
       end
       instance.should be_an_instance_of(Spec::Mocks::Mock)
@@ -33,7 +33,7 @@ describe "ezormock" do
   describe "instances" do
     context "default (savable)" do
       def savable
-        @savable = ezormock(ExampleModel)
+        @savable = stubble(ExampleModel)
       end
       
       it "returns true for save" do
@@ -59,7 +59,7 @@ describe "ezormock" do
     
     context "unsavable" do
       def unsavable
-        @unsavable = ezormock(ExampleModel, :savable => false)
+        @unsavable = stubble(ExampleModel, :savable => false)
       end
       
       it "returns false for save" do

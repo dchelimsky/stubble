@@ -1,5 +1,15 @@
+$:.unshift(File.dirname(__FILE__)) unless
+  $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
+
 module Ezormocks
-  def ezormock(klass, options={:savable => true})
+  VERSION = '0.0.1'
+end
+
+require 'rubygems'
+require 'activerecord'
+
+module Stubble
+  def stubble(klass, options={:savable => true})
     instance = stub(
       klass,
       :save => options[:savable],

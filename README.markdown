@@ -1,21 +1,23 @@
-# ezormocks
+# stubble
 
-* http://github.com/dchelimsky/ezormocks
+* http://github.com/dchelimsky/stubble
 
 ## DESCRIPTION:
 
-Tools to make mocking and stubbing ORM models just a little bit easier.
-
-Pronounced "Easier Mocks", but contrived from Easy ORM Mocks
+Tools to make stubbing ORM models just a little bit easier.
 
 ## GOALS:
 
-Short term goal is to support ActiveRecord with RSpec's mocks because that's
-what we're using on the project I'm working on right now.
+Short term goal is to support ActiveRecord with RSpec's stub/mock framework
+because that's what we're using on the project I'm working on right now.
 
-Midterm goal is to evolve an ass-kickingly simple API to make it easier to mock and stub general concepts like the creation, saving and updating ORM models without worrying about the details of which specific methods are being called when.
+Midterm goal is to evolve an ass-kickingly simple API to make it easier to
+stub general concepts like the creation, saving and updating ORM models
+without worrying about the details of which specific methods are being called
+when.
 
-Long term goal is to create an adapter API to easily support the same mocking API for multiple ORMs, mock frameworks and app frameworks.
+Long term goal is to create an adapter API to easily support the same stubbing
+API for multiple ORMs, mock frameworks and app frameworks.
 
 ## FEATURES/PROBLEMS:
 
@@ -24,7 +26,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
 ## SYNOPSIS:
 
-    By default, ezormocks are findable, and savable.
+    By default, stubble models are findable, and savable.
 
     The following examples will both pass if the controller's update action uses #find with any of:
 
@@ -35,7 +37,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
     describe "things" do
       context "successful PUT"
         it "redirects to the things index" do
-          ezormock(Thing)
+          stubble(Thing)
           post :update
           response.should redirect_to(things_path)
         end
@@ -43,7 +45,7 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
       context "failed PUT"
         it "re-renders the edit page" do
-          ezormock(Thing, :savable => false)
+          stubble(Thing, :savable => false)
           post :update
           response.should render_template('edit')
         end
@@ -56,8 +58,8 @@ Long term goal is to create an adapter API to easily support the same mocking AP
 
 ## INSTALL:
 
-    $ git clone git://github.com/dchelimsky/ezormock.git
-    $ cd ezormock
+    $ git clone git://github.com/dchelimsky/stubble.git
+    $ cd stubble
     $ rake gem
     $ rake install_gem
 
