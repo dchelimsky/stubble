@@ -10,5 +10,13 @@ $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'stubble'
 
 Spec::Runner.configure do |c|
-  c.include(Ezormocks)
+  c.include(Stubble)
+end
+
+unless defined?(ActiveRecord)
+  module ActiveRecord
+    class RecordInvalid < StandardError
+      def initialize(instance); end
+    end
+  end
 end
