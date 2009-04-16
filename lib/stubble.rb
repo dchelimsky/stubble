@@ -18,13 +18,18 @@ module Stubble
         instance.stub!(method).and_raise(ActiveRecord::RecordInvalid.new(instance))
       end
     end
-    [:find, :new].each do |method|
-      klass.stub!(method).and_return(instance)
+    klass.stub!(:new).and_return(instance)
+    klass.stub!(:all).and_return([instance])
+    
+    if options[:id]
+      klass.stub!(:find).and_raise(ActiveRecord::RecordNotFound.new)
+      klass.stub!(:find).with(options[:id]).and_return(instance)
+    else
+      klass.stub!(:find).and_return(instance)
     end
-    [:all].each do |method|
-      klass.stub!(method).and_return([instance])
-    end
+
     yield instance if block_given?
+
     instance
   end
 end

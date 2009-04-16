@@ -18,5 +18,8 @@ unless defined?(ActiveRecord)
     class RecordInvalid < StandardError
       def initialize(instance); end
     end
+    
+    class RecordNotFound < StandardError
+    end
   end
 end
