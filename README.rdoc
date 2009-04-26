@@ -25,13 +25,13 @@ API for multiple ORMs, mock frameworks and app frameworks.
 
 == SYNOPSIS:
 
-    By default, stubble models are findable, and savable.
+By default, stubble models are findable, and savable.
 
-    The following examples will both pass if the controller's update action uses =find with any of:
+The following examples will both pass if the controller's update action uses find with any of:
 
-    * update_attribute + (save || save!)
-    * update_attributes
-    * update_attributes!
+* update_attribute + (save || save!)
+* update_attributes
+* update_attributes!
 
     describe "things" do
       context "successful PUT"
