@@ -1,53 +1,51 @@
 require File.join(File.dirname(__FILE__), "/spec_helper")
 
-class ExampleModel
+class Model
 end
 
 describe "stubble" do
   describe "class methods" do
     describe "find()" do
       it "returns a stubbled instance when given no args" do
-        model = stubble(ExampleModel)
-        ExampleModel.find("37").should == model
+        model = stubble(Model)
+        Model.find("37").should equal(model)
       end
 
       it "returns a stubbled instance when given :id => the same id passed to find" do
-        model = stubble(ExampleModel, :id => "37")
-        ExampleModel.find("37").should == model
+        model = stubble(Model, :id => "37")
+        Model.find("37").should equal(model)
       end
 
       it "raises RecordNotFound when given :id => the wrong id" do
-        model = stubble(ExampleModel, :id => "37")
+        model = stubble(Model, :id => "37")
         lambda do
-          ExampleModel.find("42")
+          Model.find("42")
         end.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
     
     it "stubs new on the class object, returning an stubbled instance" do
-      model = stubble(ExampleModel)
-      ExampleModel.new.should == model
+      model = stubble(Model)
+      Model.new.should equal(model)
     end
     it "stubs all on the class object, returning an stubbled instance in an array" do
-      model = stubble(ExampleModel)
-      ExampleModel.all.should == [model]
+      model = stubble(Model)
+      Model.all.should == [model]
     end
   end
   
   context "creating" do
     it "yields the instance" do
-      instance = nil
-      stubble(ExampleModel) do |yielded_instance|
-        instance = yielded_instance
-      end
-      instance.should be_an_instance_of(Spec::Mocks::Mock)
+      yielded_instance = nil
+      assigned_instance = stubble(Model) {|yielded_instance|}
+      yielded_instance.should equal(assigned_instance)
     end
   end
 
   describe "instances" do
     context "default (savable)" do
       def savable
-        @savable = stubble(ExampleModel)
+        @savable = stubble(Model)
       end
       
       it "returns true for save" do
@@ -73,7 +71,7 @@ describe "stubble" do
     
     context "unsavable" do
       def unsavable
-        @unsavable = stubble(ExampleModel, :savable => false)
+        @unsavable = stubble(Model, :savable => false)
       end
       
       it "returns false for save" do
