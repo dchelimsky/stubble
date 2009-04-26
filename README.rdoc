@@ -1,15 +1,14 @@
-# stubble
+= stubble
 
 * http://github.com/dchelimsky/stubble
 
-## DESCRIPTION:
+== DESCRIPTION:
 
 Tools to make stubbing ORM models just a little bit easier.
 
-## GOALS:
+== GOALS:
 
-Short term goal is to support ActiveRecord with RSpec's stub/mock framework
-because that's what we're using on the project I'm working on right now.
+Short term goal is to support ActiveRecord with RSpec's stub/mock framework.
 
 Midterm goal is to evolve an ass-kickingly simple API to make it easier to
 stub general concepts like the creation, saving and updating ORM models
@@ -19,16 +18,16 @@ when.
 Long term goal is to create an adapter API to easily support the same stubbing
 API for multiple ORMs, mock frameworks and app frameworks.
 
-## FEATURES/PROBLEMS:
+== FEATURES/PROBLEMS:
 
 * Currently just a gleam in my eye
 * Supports very simple stuff for ActiveRecord / RSpec's mocks
 
-## SYNOPSIS:
+== SYNOPSIS:
 
     By default, stubble models are findable, and savable.
 
-    The following examples will both pass if the controller's update action uses #find with any of:
+    The following examples will both pass if the controller's update action uses =find with any of:
 
     * update_attribute + (save || save!)
     * update_attributes
@@ -52,18 +51,18 @@ API for multiple ORMs, mock frameworks and app frameworks.
       end
     end
 
-## REQUIREMENTS:
+== REQUIREMENTS:
 
 * activerecord
 
-## INSTALL:
+== INSTALL:
 
     $ git clone git://github.com/dchelimsky/stubble.git
     $ cd stubble
     $ rake gem
     $ rake install_gem
 
-## LICENSE:
+== LICENSE:
 
 (The MIT License)
 

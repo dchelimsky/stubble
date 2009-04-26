@@ -1,8 +1,8 @@
-History.txt
+History.rdoc
 lib/stubble.rb
 Manifest.txt
 Rakefile
-README.markdown
+README.rdoc
 spec/spec.opts
 spec/spec_helper.rb
 spec/stubble_spec.rb
