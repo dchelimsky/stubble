@@ -2,7 +2,7 @@
 require File.dirname(__FILE__) + '/lib/stubble'
 
 Hoe.new('stubble', Stubble::VERSION) do |p|
-  p.developer = ['David Chelimsky','dchelimsky@gmail.com']
+  p.developer 'David Chelimsky','dchelimsky@gmail.com'
   p.summary = "stubble-#{Stubble::VERSION}"
   p.description = 'Tools to make stubbing ORM models just a little bit easier.'
   p.url = 'http://github.com/dchelimsky/stubble'
