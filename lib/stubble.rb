@@ -2,7 +2,7 @@ lib = File.expand_path(File.dirname(__FILE__))
 $:.unshift(lib) unless $:.include?(lib)
 
 module Stubble
-  VERSION = '0.0.1'
+  VERSION = '0.0.0.a'
 
   def stubble(klass, options={:savable => true})
     instance = stub(
