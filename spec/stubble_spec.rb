@@ -15,6 +15,16 @@ describe "stubble" do
         model = stubble(Model, :id => "37")
         Model.find("37").should equal(model)
       end
+      
+      it "returns a collection with :all" do
+        model = stubble(Model)
+        Model.find(:all).should == [model]
+      end
+
+      it "returns a collection with :all with additional args" do
+        model = stubble(Model)
+        Model.find(:all, :additional_arg => :whatever).should == [model]
+      end
 
       it "raises RecordNotFound when given :id => the wrong id" do
         model = stubble(Model, :id => "37")

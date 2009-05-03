@@ -28,7 +28,13 @@ module Stubble
       klass.stub!(:find).and_raise(ActiveRecord::RecordNotFound.new)
       klass.stub!(:find).with(options[:id]).and_return(instance)
     else
-      klass.stub!(:find).and_return(instance)
+      klass.stub!(:find) do |*args|
+        if !args.empty? && args.first == :all
+          [instance]
+        else
+          instance
+        end
+      end
     end
 
     yield instance if block_given?
