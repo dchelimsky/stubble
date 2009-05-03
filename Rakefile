@@ -12,5 +12,4 @@ Hoe.new('stubble', Stubble::VERSION) do |p|
   p.history_file = 'History.rdoc'
 end
 
-Dir['tasks/**/*.rake'].each { |t| load t }
-task :default => [:spec]
+
