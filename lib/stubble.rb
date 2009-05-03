@@ -3,37 +3,40 @@ $:.unshift(lib) unless $:.include?(lib)
 
 module Stubble
   VERSION = '0.0.0'
-
-  def stubble(klass, options={:savable => true})
-    instance = stub(
-      klass,
-      :save => options[:savable],
-      :update_attribute => options[:savable],
-      :update_attributes => options[:savable]
-    ).as_null_object
-
-    [:save!, :update_attributes!].each do |method|
-      if options[:savable]
-        instance.stub!(method).and_return(true)
-      else
-        instance.stub!(method).and_raise(ActiveRecord::RecordInvalid.new(instance))
+  
+  module Unsavable
+    class << self
+      def extended(instance)
+        [:save!, :update_attributes!].each do |method|
+          instance.stub!(method) {raise ActiveRecord::RecordInvalid.new(instance)}
+        end
+        [:save, :update_attribute, :update_attributes, :valid?].each do |method|
+          instance.stub!(method) {false}
+        end
       end
     end
-    instance.stub!(:valid?).and_return(options[:savable])
+  end
+  
+  def stubble(klass, options={:savable => true})
+    instance = stub(klass).as_null_object
 
-    klass.stub!(:new).and_return(instance)
-    klass.stub!(:all).and_return([instance])
+    if options[:savable]
+      klass.stub!(:create!) {instance}
+    else
+      klass.stub!(:create!) {raise ActiveRecord::RecordInvalid.new(instance)}
+      instance.extend Unsavable
+    end
+
+    klass.stub!(:new)   { instance }
+    klass.stub!(:create){ instance }
+    klass.stub!(:all)   {[instance]}
     
     if options[:id]
       klass.stub!(:find).and_raise(ActiveRecord::RecordNotFound.new)
       klass.stub!(:find).with(options[:id]).and_return(instance)
     else
       klass.stub!(:find) do |*args|
-        if !args.empty? && args.first == :all
-          [instance]
-        else
-          instance
-        end
+        args.first == :all ? [instance] : instance
       end
     end
 

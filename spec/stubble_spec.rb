@@ -50,6 +50,21 @@ describe "stubble" do
       assigned_instance = stubble(Model) {|yielded_instance|}
       yielded_instance.should equal(assigned_instance)
     end
+    
+    it "stubs create" do
+      instance = stubble(Model)
+      Model.create.should == instance
+    end
+    
+    it "stubs create!" do
+      instance = stubble(Model)
+      Model.create!.should == instance
+    end
+    
+    it "raises if savable => false" do
+      stubble(Model, :savable => false)
+      expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
 
   describe "instances" do
