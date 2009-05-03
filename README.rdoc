@@ -26,37 +26,98 @@ API for multiple ORMs, mock frameworks and app frameworks.
 
 == SYNOPSIS:
 
-By default, stubble models are findable, and savable.
+describe ThingsController do
+  context "PUT with valid attributes"
+    it "redirects to the things index" do
+      stubble(Thing)
+      put :update
+      response.should redirect_to(things_path)
+    end
+  end
+end
 
-=== GET requests
+== USAGE:
 
-The following examples will both pass if the controller's update action uses find with any of:
+By default, stubble model classes are happy. They can be found, created, and
+saved in all number of ways without complaint.
 
-* find
+  thing = stubble(Thing)
+  
+... stubs all the following:
 
-    describe "things" do
-      context "successful GET"
-        it "assigns things" do
-          thing = stubble(Thing)
-          get :index
-          assigns[:things].should == [thing]
-        end
+  Thing.new        => stub_thing
+  Thing.find(id)   => stub_thing
+  Thing.create     => stub_thing
+  Thing.create!    => stub_thing
+
+  Thing.all               => [stub_thing]
+  Thing.all(*args)        => [stub_thing]
+  Thing.find(:all)        => [stub_thing]
+  Thing.find(:all, *args) => [stub_thing]
+  
+The instance of Thing is set up with the following stubs:
+
+  stub_thing.valid?             => true
+  stub_thing.save               => true
+  stub_thing.save!              => true
+  stub_thing.update_attributes  => true
+  stub_thing.update_attributes! => true
+  
+You can also tell stubble to create an unsavable stub, like so:
+
+  stubble(Thing, :savable => false)
+  
+This will respond to various finders, creators just like the default, with the exception
+of create!
+
+  Thing.create! => raise ActiveRecord::RecordInvalid
+  
+The instance returned is stubbed as follows:
+
+  stub_thing.valid?             => false
+  stub_thing.save               => false
+  stub_thing.save!              => raise ActiveRecord::RecordInvalid
+  stub_thing.update_attributes  => false
+  stub_thing.update_attributes! => raise ActiveRecord::RecordInvalid
+
+=== Examples
+
+==== GET requests
+
+The following examples will both pass if the controller's index action uses:
+
+* find()
+
+  describe "things" do
+    context "successful GET"
+      it "assigns things" do
+        thing = stubble(Thing)
+        get :index
+        assigns[:things].should == [thing]
       end
     end
+  end
 
-=== POST requests
+==== POST requests
 
-    describe "things" do
-      context "successful POST"
-        it "creates a new thing" do
-          thing = stubble(Thing)
-          post :create
-          assigns[:things].should == [thing]
-        end
+The following examples will both pass if the controller's index action uses:
+
+* new()
+* create()
+* create!()
+* valid?
+
+  describe "things" do
+    context "successful POST"
+      it "creates a new thing" do
+        thing = stubble(Thing)
+        post :create
+        assigns[:things].should == [thing]
       end
     end
+  end
 
-=== PUT requests
+==== PUT requests
 The following examples will both pass if the controller's update action uses find with any of:
 
 * update_attribute + (save || save!)
