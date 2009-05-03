@@ -1,9 +1,9 @@
+.document
 History.rdoc
-lib/stubble.rb
 Manifest.txt
-Rakefile
 README.rdoc
+Rakefile
+lib/stubble.rb
 spec/spec.opts
 spec/spec_helper.rb
 spec/stubble_spec.rb
-tasks/rspec.rake

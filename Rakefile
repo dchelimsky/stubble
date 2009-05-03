@@ -12,4 +12,10 @@ Hoe.new('stubble', Stubble::VERSION) do |p|
   p.history_file = 'History.rdoc'
 end
 
+namespace :update do
+  desc "update the manifest"
+  task :manifest do
+    system %q[touch Manifest.txt; rake check_manifest | grep -v "(in " | patch]
+  end
+end
 
