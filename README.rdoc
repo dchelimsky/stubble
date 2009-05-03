@@ -28,6 +28,35 @@ API for multiple ORMs, mock frameworks and app frameworks.
 
 By default, stubble models are findable, and savable.
 
+=== GET requests
+
+The following examples will both pass if the controller's update action uses find with any of:
+
+* find
+
+    describe "things" do
+      context "successful GET"
+        it "assigns things" do
+          thing = stubble(Thing)
+          get :index
+          assigns[:things].should == [thing]
+        end
+      end
+    end
+
+=== POST requests
+
+    describe "things" do
+      context "successful POST"
+        it "creates a new thing" do
+          thing = stubble(Thing)
+          post :create
+          assigns[:things].should == [thing]
+        end
+      end
+    end
+
+=== PUT requests
 The following examples will both pass if the controller's update action uses find with any of:
 
 * update_attribute + (save || save!)
@@ -38,7 +67,7 @@ The following examples will both pass if the controller's update action uses fin
       context "successful PUT"
         it "redirects to the things index" do
           stubble(Thing)
-          post :update
+          put :update
           response.should redirect_to(things_path)
         end
       end
@@ -46,7 +75,7 @@ The following examples will both pass if the controller's update action uses fin
       context "failed PUT"
         it "re-renders the edit page" do
           stubble(Thing, :savable => false)
-          post :update
+          put :update
           response.should render_template('edit')
         end
       end
