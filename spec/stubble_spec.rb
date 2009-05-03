@@ -67,6 +67,10 @@ describe "stubble" do
       it "returns true for update_attributes!" do
         savable.update_attributes!.should be_true
       end
+      
+      it "returns true for valid?" do
+        savable.valid?.should be_true
+      end
     end
     
     context "unsavable" do
@@ -96,6 +100,10 @@ describe "stubble" do
         lambda {
           unsavable.update_attributes!
         }.should raise_error(ActiveRecord::RecordInvalid)
+      end
+      
+      it "returns false for valid?" do
+        unsavable.valid?.should be_false
       end
     end
   end
