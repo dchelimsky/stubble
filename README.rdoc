@@ -20,7 +20,8 @@ API for multiple ORMs, mock frameworks and app frameworks.
 
 == FEATURES/PROBLEMS:
 
-* Currently just a gleam in my eye
+* Currently unreleased and purely experimental
+* API *will* change at this point
 * Supports very simple stuff for ActiveRecord / RSpec's mocks
 
 == SYNOPSIS:
