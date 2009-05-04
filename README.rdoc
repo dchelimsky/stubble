@@ -29,9 +29,10 @@ API for multiple ORMs, mock frameworks and app frameworks.
 describe ThingsController do
   context "PUT with valid attributes"
     it "redirects to the things index" do
-      stubble(Thing)
-      put :update
-      response.should redirect_to(things_path)
+      stubbing(Thing) do
+        put :update
+        response.should redirect_to(things_path)
+      end
     end
   end
 end
@@ -41,7 +42,9 @@ end
 By default, stubble model classes are happy. They can be found, created, and
 saved in all number of ways without complaint.
 
-  thing = stubble(Thing)
+  stubbing(Thing) do |thing|
+    ...
+  end
   
 ... stubs all the following:
 
@@ -65,7 +68,9 @@ The instance of Thing is set up with the following stubs:
   
 You can also tell stubble to create an unsavable stub, like so:
 
-  stubble(Thing, :savable => false)
+  stubbing(Thing, :as => :invalid) do |thing|
+    ...
+  end
   
 This will respond to various finders, creators just like the default, with the exception
 of create!
@@ -91,9 +96,10 @@ The following examples will both pass if the controller's index action uses:
   describe "things" do
     context "successful GET"
       it "assigns things" do
-        thing = stubble(Thing)
-        get :index
-        assigns[:things].should == [thing]
+        stubbing(Thing) do |thing|
+          get :index
+          assigns[:things].should == [thing]
+        end
       end
     end
   end
@@ -110,9 +116,10 @@ The following examples will both pass if the controller's index action uses:
   describe "things" do
     context "successful POST"
       it "creates a new thing" do
-        thing = stubble(Thing)
-        post :create
-        assigns[:things].should == [thing]
+        stubbing(Thing) do |thing|
+          post :create
+          assigns[:things].should == [thing]
+        end
       end
     end
   end
@@ -127,17 +134,19 @@ The following examples will both pass if the controller's update action uses fin
     describe "things" do
       context "successful PUT"
         it "redirects to the things index" do
-          stubble(Thing)
-          put :update
-          response.should redirect_to(things_path)
+          stubbing(Thing) do
+            put :update
+            response.should redirect_to(things_path)
+          end
         end
       end
 
       context "failed PUT"
         it "re-renders the edit page" do
-          stubble(Thing, :savable => false)
-          put :update
-          response.should render_template('edit')
+          stubbing(Thing, :as => :invalid) do
+            put :update
+            response.should render_template('edit')
+          end
         end
       end
     end

@@ -7,27 +7,27 @@ describe "stubble" do
   describe "class methods" do
     describe "find()" do
       it "returns a stubbled instance when given no args" do
-        model = stubble(Model)
+        model = stubbing(Model)
         Model.find("37").should equal(model)
       end
 
       it "returns a stubbled instance when given :id => the same id passed to find" do
-        model = stubble(Model, :id => "37")
+        model = stubbing(Model, :id => "37")
         Model.find("37").should equal(model)
       end
       
       it "returns a collection with :all" do
-        model = stubble(Model)
+        model = stubbing(Model)
         Model.find(:all).should == [model]
       end
 
       it "returns a collection with :all with additional args" do
-        model = stubble(Model)
+        model = stubbing(Model)
         Model.find(:all, :additional_arg => :whatever).should == [model]
       end
 
       it "raises RecordNotFound when given :id => the wrong id" do
-        model = stubble(Model, :id => "37")
+        model = stubbing(Model, :id => "37")
         lambda do
           Model.find("42")
         end.should raise_error(ActiveRecord::RecordNotFound)
@@ -35,11 +35,11 @@ describe "stubble" do
     end
     
     it "stubs new on the class object, returning an stubbled instance" do
-      model = stubble(Model)
+      model = stubbing(Model)
       Model.new.should equal(model)
     end
     it "stubs all on the class object, returning an stubbled instance in an array" do
-      model = stubble(Model)
+      model = stubbing(Model)
       Model.all.should == [model]
     end
   end
@@ -47,22 +47,22 @@ describe "stubble" do
   context "creating" do
     it "yields the instance" do
       yielded_instance = nil
-      assigned_instance = stubble(Model) {|yielded_instance|}
+      assigned_instance = stubbing(Model) {|yielded_instance|}
       yielded_instance.should equal(assigned_instance)
     end
     
     it "stubs create" do
-      instance = stubble(Model)
+      instance = stubbing(Model)
       Model.create.should == instance
     end
     
     it "stubs create!" do
-      instance = stubble(Model)
+      instance = stubbing(Model)
       Model.create!.should == instance
     end
     
     it "raises if savable => false" do
-      stubble(Model, :savable => false)
+      stubbing(Model, :savable => false)
       expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
@@ -70,7 +70,7 @@ describe "stubble" do
   describe "instances" do
     context "default (savable)" do
       def savable
-        @savable = stubble(Model)
+        @savable = stubbing(Model)
       end
       
       it "returns true for save" do
@@ -100,7 +100,7 @@ describe "stubble" do
     
     context "unsavable" do
       def unsavable
-        @unsavable = stubble(Model, :savable => false)
+        @unsavable = stubbing(Model, :savable => false)
       end
       
       it "returns false for save" do
