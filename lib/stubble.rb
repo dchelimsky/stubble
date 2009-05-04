@@ -27,9 +27,9 @@ module Stubble
     end
   end
   
-  def build_stubs(klass, options={:savable => true})
+  def build_stubs(klass, options={:as => :valid})
     instance = stub(klass).as_null_object
-    if options[:savable]
+    if options[:as] == :valid
       instance.extend(ValidModel)
       klass.stub(:create!) {instance}
     else
@@ -53,7 +53,7 @@ module Stubble
     instance
   end
   
-  def stubbing(klass, options={:savable => true})
+  def stubbing(klass, options={:as => :valid})
     yield build_stubs(klass, options)
   end
 end

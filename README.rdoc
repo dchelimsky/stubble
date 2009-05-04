@@ -39,7 +39,7 @@ end
 
 == USAGE:
 
-By default, stubble model classes are happy. They can be found, created, and
+By default, stubble model classes are valid. They can be found, created, and
 saved in all number of ways without complaint.
 
   stubbing(Thing) do |thing|
@@ -66,7 +66,7 @@ The instance of Thing is set up with the following stubs:
   stub_thing.update_attributes  => true
   stub_thing.update_attributes! => true
   
-You can also tell stubble to create an unsavable stub, like so:
+You can also tell stubble to create an invalid stub, like so:
 
   stubbing(Thing, :as => :invalid) do |thing|
     ...

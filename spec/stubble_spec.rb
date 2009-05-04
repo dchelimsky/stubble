@@ -63,74 +63,74 @@ describe "stubble" do
       Model.create!.should == instance
     end
     
-    it "raises if savable => false" do
-      build_stubs(Model, :savable => false)
+    it "raises if valid => false" do
+      build_stubs(Model, :valid => false)
       expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
   describe "instances" do
-    context "default (savable)" do
-      def savable
-        @savable = build_stubs(Model)
+    context "default (valid)" do
+      def valid_model
+        @valid_model = build_stubs(Model)
       end
       
       it "returns true for save" do
-        savable.save.should == true
+        valid_model.save.should == true
       end
 
       it "returns true for save!" do
-        savable.save!.should == true
+        valid_model.save!.should == true
       end
 
       it "returns true for update_attribute" do
-        savable.update_attribute.should == true
+        valid_model.update_attribute.should == true
       end
 
       it "returns true for update_attributes" do
-        savable.update_attributes.should == true
+        valid_model.update_attributes.should == true
       end
 
       it "returns true for update_attributes!" do
-        savable.update_attributes!.should == true
+        valid_model.update_attributes!.should == true
       end
       
       it "returns true for valid?" do
-        savable.valid?.should == true
+        valid_model.valid?.should == true
       end
     end
     
-    context "unsavable" do
-      def unsavable
-        @unsavable = build_stubs(Model, :savable => false)
+    context "invalid_model" do
+      def invalid_model
+        @invalid_model = build_stubs(Model, :valid => false)
       end
       
       it "returns false for save" do
-        unsavable.save.should be_false
+        invalid_model.save.should be_false
       end
 
       it "raises on save!" do
         lambda {
-          unsavable.save!
+          invalid_model.save!
         }.should raise_error(ActiveRecord::RecordInvalid)
       end
 
       it "returns false for update_attribute" do
-        unsavable.update_attribute.should be_false
+        invalid_model.update_attribute.should be_false
       end
 
       it "returns false for update_attributes" do
-        unsavable.update_attributes.should be_false
+        invalid_model.update_attributes.should be_false
       end
 
       it "raises on update_attributes!" do
         lambda {
-          unsavable.update_attributes!
+          invalid_model.update_attributes!
         }.should raise_error(ActiveRecord::RecordInvalid)
       end
       
       it "returns false for valid?" do
-        unsavable.valid?.should be_false
+        invalid_model.valid?.should be_false
       end
     end
   end
