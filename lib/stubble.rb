@@ -4,6 +4,16 @@ $:.unshift(lib) unless $:.include?(lib)
 module Stubble
   VERSION = '0.0.0'
   
+  module ValidModel
+    class << self
+      def extended(instance)
+        [:save, :save!, :update_attribute, :update_attributes, :update_attributes!, :valid?].each do |method|
+          instance.stub!(method) {true}
+        end
+      end
+    end
+  end
+  
   module InvalidModel
     class << self
       def extended(instance)
@@ -17,10 +27,13 @@ module Stubble
     end
   end
   
-  def stub_class(klass, instance, options)
+  def build_stubs(klass, options={:savable => true})
+    instance = stub(klass).as_null_object
     if options[:savable]
+      instance.extend(ValidModel)
       klass.stub(:create!) {instance}
     else
+      instance.extend(InvalidModel)
       klass.stub(:create!) {raise ActiveRecord::RecordInvalid.new(instance)}
     end
 
@@ -36,22 +49,11 @@ module Stubble
         args.first == :all ? [instance] : instance
       end
     end
-  end
-  
-  def stub_instance(klass, instance, options)
-    instance = stub(klass).as_null_object
-    unless options[:savable]
-      instance.extend InvalidModel
-    end
+
     instance
   end
   
   def stubbing(klass, options={:savable => true})
-    instance = stub_instance(klass, instance, options)
-    stub_class(klass, instance, options)
-
-    yield instance if block_given?
-
-    instance
+    yield build_stubs(klass, options)
   end
 end
