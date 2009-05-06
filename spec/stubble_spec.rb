@@ -50,21 +50,37 @@ describe "stubble" do
         model.should_not be_nil
       end
     end
+    
+    it "tears down the stubs" do
+      model = nil
+      stubbing(Model) do |model|
+        model.stub(:foo).and_return(:bar)
+        model.foo.should == :bar
+      end
+      expect do
+        model.foo
+      end.to raise_error(/undefined local variable or method `foo'/)
+    end
   end
   
   context "creating" do
+    it "stubs new" do
+      instance = build_stubs(Model)
+      Model.new.should equal(instance)
+    end
+    
     it "stubs create" do
       instance = build_stubs(Model)
-      Model.create.should == instance
+      Model.create.should equal(instance)
     end
     
     it "stubs create!" do
       instance = build_stubs(Model)
-      Model.create!.should == instance
+      Model.create!.should equal(instance)
     end
     
     it "raises if valid => false" do
-      build_stubs(Model, :valid => false)
+      build_stubs(Model, :as => :invalid)
       expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
@@ -102,7 +118,7 @@ describe "stubble" do
     
     context "invalid_model" do
       def invalid_model
-        @invalid_model = build_stubs(Model, :valid => false)
+        @invalid_model = build_stubs(Model, :as => :invalid)
       end
       
       it "returns false for save" do
