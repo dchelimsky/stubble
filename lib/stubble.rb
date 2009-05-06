@@ -4,11 +4,19 @@ $:.unshift(lib) unless $:.include?(lib)
 module Stubble
   VERSION = '0.0.0'
   
+  module StubMethod
+    def stub_method(obj, method, &block)
+      obj.stub(method, &block)
+    end
+  end
+  include StubMethod
+  
   module ValidModel
     class << self
+      include StubMethod
       def extended(instance)
         [:save, :save!, :update_attribute, :update_attributes, :update_attributes!, :valid?].each do |method|
-          instance.stub!(method) {true}
+          stub_method(instance, method) {true}
         end
       end
     end
@@ -16,12 +24,13 @@ module Stubble
   
   module InvalidModel
     class << self
+      include StubMethod
       def extended(instance)
         [:save!, :update_attributes!].each do |method|
-          instance.stub!(method) {raise ActiveRecord::RecordInvalid.new(instance)}
+          stub_method(instance, method) {raise ActiveRecord::RecordInvalid.new(instance)}
         end
         [:save, :update_attribute, :update_attributes, :valid?].each do |method|
-          instance.stub!(method) {false}
+          stub_method(instance, method) {false}
         end
       end
     end
@@ -31,21 +40,26 @@ module Stubble
     instance = stub(klass).as_null_object
     if options[:as] == :valid
       instance.extend(ValidModel)
-      klass.stub(:create!) {instance}
+      stub_method(klass, :create!) {instance}
     else
       instance.extend(InvalidModel)
-      klass.stub(:create!) {raise ActiveRecord::RecordInvalid.new(instance)}
+      stub_method(klass, :create!) {raise ActiveRecord::RecordInvalid.new(instance)}
     end
 
-    klass.stub(:new)   { instance }
-    klass.stub(:create){ instance }
-    klass.stub(:all)   {[instance]}
+    stub_method(klass, :new) {instance}
+    stub_method(klass, :create) {instance}
+    stub_method(klass, :all) {[instance]}
 
     if options[:id]
-      klass.stub(:find).and_raise(ActiveRecord::RecordNotFound.new)
-      klass.stub(:find).with(options[:id]).and_return(instance)
+      stub_method(klass, :find) do |*args|
+        if args.first.to_i == options[:id].to_i
+          instance
+        else
+          raise ActiveRecord::RecordNotFound.new
+        end
+      end
     else
-      klass.stub(:find) do |*args|
+      stub_method(klass, :find) do |*args|
         args.first == :all ? [instance] : instance
       end
     end
