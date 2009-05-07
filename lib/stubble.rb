@@ -5,8 +5,23 @@ module Stubble
   VERSION = '0.0.0'
   
   module StubMethod
-    def stub_method(obj, method, &block)
-      obj.stub(method, &block)
+    def stub_method(obj, method, options={}, &block)
+      if options[:raise]
+        obj.stub(method, &block).and_raise(options[:raise])
+      elsif options[:return]
+        if options[:with]
+          obj.stub(method, &block).with(options[:with]).and_return(options[:return])
+          obj.stub(method, &block).with(options[:with], anything).and_return(options[:return])
+        else
+          obj.stub(method, &block).and_return(options[:return])
+        end
+      else
+        obj.stub(method, &block)
+      end
+    end
+    
+    def reset
+      $rspec_mocks.reset_all
     end
   end
   include StubMethod
@@ -16,7 +31,7 @@ module Stubble
       include StubMethod
       def extended(instance)
         [:save, :save!, :update_attribute, :update_attributes, :update_attributes!, :valid?].each do |method|
-          stub_method(instance, method) {true}
+          stub_method(instance, method, :return => true)
         end
       end
     end
@@ -27,7 +42,7 @@ module Stubble
       include StubMethod
       def extended(instance)
         [:save!, :update_attributes!].each do |method|
-          stub_method(instance, method) {raise ActiveRecord::RecordInvalid.new(instance)}
+          stub_method(instance, method, :raise => ActiveRecord::RecordInvalid.new(instance))
         end
         [:save, :update_attribute, :update_attributes, :valid?].each do |method|
           stub_method(instance, method) {false}
@@ -40,28 +55,21 @@ module Stubble
     instance = klass.new
     if options[:as] == :invalid
       instance.extend(InvalidModel)
-      stub_method(klass, :create!) {raise ActiveRecord::RecordInvalid.new(instance)}
+      stub_method(klass, :create!, :raise => ActiveRecord::RecordInvalid.new(instance))
+    elsif options[:as] == :unfindable
+      stub_method(klass, :find, :raise => ActiveRecord::RecordNotFound.new)
     else
       instance.extend(ValidModel)
-      stub_method(klass, :create!) {instance}
+      stub_method(klass, :create!, :return => instance)
     end
 
-    stub_method(klass, :new) {instance}
-    stub_method(klass, :create) {instance}
-    stub_method(klass, :all) {[instance]}
+    stub_method(klass, :new, :return => instance)
+    stub_method(klass, :create, :return => instance)
+    stub_method(klass, :all, :return => [instance])
 
-    if options[:id]
-      stub_method(klass, :find) do |*args|
-        if args.first.to_i == options[:id].to_i
-          instance
-        else
-          raise ActiveRecord::RecordNotFound.new
-        end
-      end
-    else
-      stub_method(klass, :find) do |*args|
-        args.first == :all ? [instance] : instance
-      end
+    unless options[:as] == :unfindable
+      stub_method(klass, :find, :return => instance)
+      stub_method(klass, :find, :with => :all, :return => [instance])
     end
 
     instance
@@ -70,6 +78,6 @@ module Stubble
   def stubbing(klass, options={:as => :valid})
     instance = build_stubs(klass, options)
     yield instance
-    instance.rspec_reset
+    reset
   end
 end

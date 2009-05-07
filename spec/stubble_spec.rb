@@ -27,7 +27,7 @@ describe "stubble" do
       end
 
       it "raises RecordNotFound when given :id => the wrong id" do
-        model = build_stubs(Model, :id => "37")
+        model = build_stubs(Model, :as => :unfindable)
         lambda do
           Model.find("42")
         end.should raise_error(ActiveRecord::RecordNotFound)
@@ -58,7 +58,7 @@ describe "stubble" do
       end
       expect do
         model.update_attribute
-      end.to raise_error(/undefined local variable or method `update_attribute'/)
+      end.to raise_error(/undefined.*method `update_attribute'/)
     end
   end
   
@@ -121,7 +121,7 @@ describe "stubble" do
       end
       
       it "returns false for save" do
-        invalid_model.save.should be_false
+        invalid_model.save.should_not be(true)
       end
 
       it "raises on save!" do
@@ -131,11 +131,11 @@ describe "stubble" do
       end
 
       it "returns false for update_attribute" do
-        invalid_model.update_attribute.should be_false
+        invalid_model.update_attribute.should_not be(true)
       end
 
       it "returns false for update_attributes" do
-        invalid_model.update_attributes.should be_false
+        invalid_model.update_attributes.should_not be(true)
       end
 
       it "raises on update_attributes!" do
@@ -145,7 +145,7 @@ describe "stubble" do
       end
       
       it "returns false for valid?" do
-        invalid_model.valid?.should be_false
+        invalid_model.valid?.should_not be(true)
       end
     end
   end

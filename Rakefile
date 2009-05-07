@@ -12,6 +12,10 @@ Hoe.new('stubble', Stubble::VERSION) do |p|
   p.history_file = 'History.rdoc'
 end
 
+Rake.application.instance_variable_get('@tasks').delete('default')
+
+task :default => ["spec:rspec","spec:mocha"]
+
 namespace :update do
   desc "update the manifest"
   task :manifest do
@@ -19,3 +23,15 @@ namespace :update do
   end
 end
 
+namespace :spec do
+  ['mocha','rr','flexmock','rspec'].each do |framework|
+    desc "using #{framework}"
+    task framework do
+      ENV['MOCK_FRAMEWORK'] = framework
+      system 'spec spec'
+    end
+  end
+end
+
+
+  
