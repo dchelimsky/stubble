@@ -54,12 +54,11 @@ describe "stubble" do
     it "tears down the stubs" do
       model = nil
       stubbing(Model) do |model|
-        model.stub(:foo).and_return(:bar)
-        model.foo.should == :bar
+        model.update_attribute.should be(true)
       end
       expect do
-        model.foo
-      end.to raise_error(/undefined local variable or method `foo'/)
+        model.update_attribute
+      end.to raise_error(/undefined local variable or method `update_attribute'/)
     end
   end
   
