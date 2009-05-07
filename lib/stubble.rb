@@ -37,13 +37,13 @@ module Stubble
   end
   
   def build_stubs(klass, options={:as => :valid})
-    instance = stub(klass).as_null_object
-    if options[:as] == :valid
-      instance.extend(ValidModel)
-      stub_method(klass, :create!) {instance}
-    else
+    instance = klass.new
+    if options[:as] == :invalid
       instance.extend(InvalidModel)
       stub_method(klass, :create!) {raise ActiveRecord::RecordInvalid.new(instance)}
+    else
+      instance.extend(ValidModel)
+      stub_method(klass, :create!) {instance}
     end
 
     stub_method(klass, :new) {instance}
@@ -68,6 +68,8 @@ module Stubble
   end
   
   def stubbing(klass, options={:as => :valid})
-    yield build_stubs(klass, options)
+    instance = build_stubs(klass, options)
+    yield instance
+    instance.rspec_reset
   end
 end
