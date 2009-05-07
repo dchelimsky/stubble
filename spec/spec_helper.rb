@@ -29,8 +29,6 @@ if f = ENV['MOCK_FRAMEWORK']
     require 'mocha'
     module Stubble::StubMethod
       include Mocha::Standalone
-      remove_method :stub_method
-      remove_method :reset
       def stub_method(obj, method, options={})
         if options[:raise]
           obj.stubs(method).raises(options[:raise])
