@@ -1,22 +1,13 @@
 module Stubble
   module StubMethod
-    def stub_method(obj, method, options={})
-      if options[:raise]
-        obj.stub(method).and_raise(options[:raise])
-      elsif options[:return]
-        if options[:with]
-          obj.stub(method).with(options[:with]).and_return(options[:return])
-          obj.stub(method).with(options[:with], anything).and_return(options[:return])
-        else
-          obj.stub(method).and_return(options[:return])
-        end
-      else
-        obj.stub(method)
-      end
-    end
-  
-    def reset
-      $rspec_mocks.reset_all
+    include Stubble::Callbacks
+    
+    def setup_callbacks
+      stub_and_return     {|obj, method, value| obj.stub(method).and_return(value)}
+      stub_with_one_arg   {|obj, method, with, value| obj.stub(method).with(with).and_return(value)}
+      stub_with_multi_arg {|obj, method, with, value| obj.stub(method).with(with, anything).and_return(value)}
+      stub_and_raise      {|obj, method, error| obj.stub(method).and_raise(error)}
+      reset               {$rspec_mocks.reset_all}
     end
   end
 end
