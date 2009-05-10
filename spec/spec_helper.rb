@@ -26,6 +26,6 @@ end
 
 ENV['STUBBLE_MOCK_FRAMEWORK'] ||= 'rspec'
 
-require "stubble/#{ENV['STUBBLE_MOCK_FRAMEWORK']}"
+require "unimock/#{ENV['STUBBLE_MOCK_FRAMEWORK']}"
 
 Spec::Runner.configure {|c| c.mock_with ENV['STUBBLE_MOCK_FRAMEWORK'].to_sym}

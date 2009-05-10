@@ -1,14 +1,14 @@
 module Stubble
   VERSION = '0.0.0'
   
-  include StubMethod
+  include Unimock
   
   module ValidModel
     class << self
-      include StubMethod
-      def extended(instance)
+      include Unimock
+      def extended(model)
         [:save, :save!, :update_attribute, :update_attributes, :update_attributes!, :valid?].each do |method|
-          stub_and_return(instance, method, true)
+          stub_and_return(model, method, true)
         end
       end
     end
@@ -16,13 +16,13 @@ module Stubble
   
   module InvalidModel
     class << self
-      include StubMethod
-      def extended(instance)
+      include Unimock
+      def extended(model)
         [:save!, :update_attributes!].each do |method|
-          stub_and_raise(instance, method, ActiveRecord::RecordInvalid.new(instance))
+          stub_and_raise(model, method, ActiveRecord::RecordInvalid.new(model))
         end
         [:save, :update_attribute, :update_attributes, :valid?].each do |method|
-          stub_and_return(instance, method, false)
+          stub_and_return(model, method, false)
         end
       end
     end

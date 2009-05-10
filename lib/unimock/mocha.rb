@@ -21,24 +21,22 @@ module Mocha
   end
 end
 
-module Stubble
-  module StubMethod
-    include Mocha::Standalone
-    
-    def stub_and_return(obj, method, value)
-      obj.stubs(method).returns(value)
-    end
-    
-    def stub_and_raise(obj, method, error)
-      obj.stubs(method).raises(error)
-    end
-    
-    def stub_and_invoke(obj, method, &block)
-      obj.stubs(method).returns(&block)
-    end
+module Unimock
+  include Mocha::Standalone
+  
+  def stub_and_return(obj, method, value)
+    obj.stubs(method).returns(value)
+  end
+  
+  def stub_and_raise(obj, method, error)
+    obj.stubs(method).raises(error)
+  end
+  
+  def stub_and_invoke(obj, method, &block)
+    obj.stubs(method).returns(&block)
+  end
 
-    def reset
-      mocha_teardown
-    end
+  def reset
+    mocha_teardown
   end
 end
