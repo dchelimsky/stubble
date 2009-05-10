@@ -1,16 +1,29 @@
 require 'mocha'
 
+module Mocha
+  class Expectation
+    alias_method :orig_returns, :returns
+    def returns(*values, &block)
+      @stubble_block = block
+      orig_returns(*values)
+    end
+    
+    alias_method :orig_invoke, :invoke
+    def invoke
+      @stubble_block ? @stubble_block.call(*@actual_parameters) : orig_invoke
+    end
+    
+    alias_method :orig_match?, :match?
+    def match?(actual_method_name, *actual_parameters)
+      @actual_parameters = actual_parameters
+      orig_match?(actual_method_name, *actual_parameters)
+    end
+  end
+end
+
 module Stubble
   module StubMethod
     include Mocha::Standalone
-    
-    def setup_callbacks
-      stub_and_return     {|obj, method, value| obj.stubss(method).returns(value)}
-      stub_with_one_arg   {|obj, method, with, value| obj.stubss(method).with(with).returns(value)}
-      stub_with_multi_arg {|obj, method, with, value| obj.stubss(method).with(with, anything).returns(value)}
-      stub_and_raise      {|obj, method, error| obj.stubss(method).raises(error)}
-      reset               {mocha_teardown}
-    end
     
     def stub_and_return(obj, method, value)
       obj.stubs(method).returns(value)
@@ -21,7 +34,7 @@ module Stubble
     end
     
     def fake(obj, method, &block)
-      obj.stubs(method).returns &block
+      obj.stubs(method).returns(&block)
     end
 
     def reset
