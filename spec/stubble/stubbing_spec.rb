@@ -53,12 +53,12 @@ describe "stubble" do
     
     it "tears down the stubs" do
       model = nil
-      stubbing(Model) do |model|
-        model.update_attribute.should be(true)
+      stubbing(Model) do
+        def reset
+          $reset_called = true
+        end
       end
-      expect do
-        model.update_attribute
-      end.to raise_error(/undefined.*method `update_attribute'/)
+      $reset_called.should be_true
     end
   end
   

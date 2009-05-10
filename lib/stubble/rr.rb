@@ -1,20 +1,23 @@
+require 'rr'
+
 module Stubble
   module StubMethod
+    include RR::Extensions::InstanceMethods
+    
     def stub_and_return(obj, method, value)
-      obj.stub(method).and_return(value)
+      stub(obj).__send__(method) {value}
     end
     
     def stub_and_raise(obj, method, error)
-      obj.stub(method).and_raise(error)
+      stub(obj).__send__(method) {raise error}
     end
     
     def fake(obj, method, &block)
-      obj.stub(method, &block)
+      stub(obj).__send__(method, &block)
     end
 
     def reset
-      $rspec_mocks.reset_all
+      RR::Space.instance.reset
     end
   end
 end
-  

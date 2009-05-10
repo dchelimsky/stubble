@@ -14,7 +14,7 @@ end
 
 Rake.application.instance_variable_get('@tasks').delete('default')
 
-task :default => ["spec:rspec","spec:mocha"]
+task :default => ["spec:rspec","spec:mocha","spec:rr","spec:flexmock"]
 
 namespace :update do
   desc "update the manifest"
