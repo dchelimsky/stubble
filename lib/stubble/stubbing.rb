@@ -46,7 +46,7 @@ module Stubble
     stub_and_return(klass, :all, [instance])
 
     unless options[:as] == :unfindable
-      fake(klass, :find) do |*args|
+      stub_and_invoke(klass, :find) do |*args|
         args.first == :all ? [instance] : instance
       end
     end

@@ -33,7 +33,7 @@ module Stubble
       obj.stubs(method).raises(error)
     end
     
-    def fake(obj, method, &block)
+    def stub_and_invoke(obj, method, &block)
       obj.stubs(method).returns(&block)
     end
 

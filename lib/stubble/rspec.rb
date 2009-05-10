@@ -8,7 +8,7 @@ module Stubble
       obj.stub(method).and_raise(error)
     end
     
-    def fake(obj, method, &block)
+    def stub_and_invoke(obj, method, &block)
       obj.stub(method, &block)
     end
 

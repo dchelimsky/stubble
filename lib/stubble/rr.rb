@@ -12,7 +12,7 @@ module Stubble
       stub(obj).__send__(method) {raise error}
     end
     
-    def fake(obj, method, &block)
+    def stub_and_invoke(obj, method, &block)
       stub(obj).__send__(method, &block)
     end
 

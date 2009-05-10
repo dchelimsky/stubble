@@ -12,7 +12,7 @@ module Stubble
       flexmock(obj).should_receive(method).and_raise(error)
     end
     
-    def fake(obj, method, &block)
+    def stub_and_invoke(obj, method, &block)
       flexmock(obj).should_receive(method).and_return(&block)
     end
 
