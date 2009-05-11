@@ -94,16 +94,16 @@ The following examples will both pass if the controller's index action uses:
 
 * find()
 
-  describe "things" do
-    context "successful GET"
-      it "assigns things" do
-        stubbing(Thing) do |thing|
-          get :index
-          assigns[:things].should == [thing]
+    describe "things" do
+      context "successful GET"
+        it "assigns things" do
+          stubbing(Thing) do |thing|
+            get :index
+            assigns[:things].should == [thing]
+          end
         end
       end
     end
-  end
 
 ==== POST requests
 
@@ -114,16 +114,16 @@ The following examples will both pass if the controller's index action uses:
 * create!()
 * valid?
 
-  describe "things" do
-    context "successful POST"
-      it "creates a new thing" do
-        stubbing(Thing) do |thing|
-          post :create
-          assigns[:things].should == [thing]
+    describe "things" do
+      context "successful POST"
+        it "creates a new thing" do
+          stubbing(Thing) do |thing|
+            post :create
+            assigns[:things].should == [thing]
+          end
         end
       end
     end
-  end
 
 ==== PUT requests
 The following examples will both pass if the controller's update action uses find with any of:
@@ -132,25 +132,25 @@ The following examples will both pass if the controller's update action uses fin
 * update_attributes
 * update_attributes!
 
-    describe "things" do
-      context "successful PUT"
-        it "redirects to the things index" do
-          stubbing(Thing) do
-            put :update
-            response.should redirect_to(things_path)
+      describe "things" do
+        context "successful PUT"
+          it "redirects to the things index" do
+            stubbing(Thing) do
+              put :update
+              response.should redirect_to(things_path)
+            end
           end
         end
-      end
 
-      context "failed PUT"
-        it "re-renders the edit page" do
-          stubbing(Thing, :as => :invalid) do
-            put :update
-            response.should render_template('edit')
+        context "failed PUT"
+          it "re-renders the edit page" do
+            stubbing(Thing, :as => :invalid) do
+              put :update
+              response.should render_template('edit')
+            end
           end
         end
       end
-    end
 
 == REQUIREMENTS:
 
