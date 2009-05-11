@@ -16,6 +16,13 @@ describe "stubble" do
         Model.find("37").should equal(model)
       end
       
+      it "returns nil given :id => the wrong ID" do
+        model = build_stubs(Model, :id => "37")
+        lambda do
+          Model.find("42")
+        end.should raise_error(ActiveRecord::RecordNotFound)
+      end
+      
       it "returns a collection with :all" do
         model = build_stubs(Model)
         Model.find(:all).should == [model]
@@ -24,13 +31,6 @@ describe "stubble" do
       it "returns a collection with :all with additional args" do
         model = build_stubs(Model)
         Model.find(:all, :additional_arg => :whatever).should == [model]
-      end
-
-      it "raises RecordNotFound when given :id => the wrong id" do
-        model = build_stubs(Model, :as => :unfindable)
-        lambda do
-          Model.find("42")
-        end.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
     

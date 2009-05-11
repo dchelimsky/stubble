@@ -3,7 +3,7 @@ module Stubble
   
   include Unimock
   
-  module ValidModel
+  module ValidModel # :nodoc:
     class << self
       include Unimock
       def extended(model)
@@ -14,7 +14,7 @@ module Stubble
     end
   end
   
-  module InvalidModel
+  module InvalidModel # :nodoc:
     class << self
       include Unimock
       def extended(model)
@@ -28,24 +28,25 @@ module Stubble
     end
   end
   
-  def build_stubs(klass, options={}) 
+  def build_stubs(klass, options={:as => :valid}) # :nodoc:
     instance = klass.new
-    case options[:as]
-      when :invalid
-        instance.extend(InvalidModel)
-        stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
-      when :unfindable
-        stub_and_raise(klass, :find, ActiveRecord::RecordNotFound.new(instance))
-      else
-        instance.extend(ValidModel)
-        stub_and_return(klass, :create!, instance)
-      end
-
     stub_and_return(klass, :new, instance)
     stub_and_return(klass, :create, instance)
     stub_and_return(klass, :all, [instance])
 
-    unless options[:as] == :unfindable
+    if options[:as] == :valid
+      instance.extend(ValidModel)
+      stub_and_return(klass, :create!, instance)
+    else
+      instance.extend(InvalidModel)
+      stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
+    end
+
+    if options[:id]
+      stub_and_invoke(klass, :find) do |*args|
+        args.first.to_i == options[:id].to_i ? instance : (raise ActiveRecord::RecordNotFound.new(instance))
+      end
+    else
       stub_and_invoke(klass, :find) do |*args|
         args.first == :all ? [instance] : instance
       end
@@ -54,6 +55,12 @@ module Stubble
     instance
   end
   
+  # :call-seq:
+  #   stubbing(Thing)                 {|thing| ... }
+  #   stubbing(Thing, :as => invalid) {|thing| ... }
+  #   stubbing(Thing, :id => "37")    {|thing| ... }
+  #
+  # See README.rdoc for more info
   def stubbing(klass, options={:as => :valid})
     instance = build_stubs(klass, options)
     yield instance
