@@ -4,25 +4,24 @@
 
 == DESCRIPTION:
 
-Tools to make stubbing ORM models just a little bit easier.
-
-== GOALS:
-
-Short term goal is to support ActiveRecord with RSpec's stub/mock framework.
-
-Midterm goal is to evolve an ass-kickingly simple API to make it easier to
-stub general concepts like the creation, saving and updating ORM models
-without worrying about the details of which specific methods are being called
-when.
-
-Long term goal is to create an adapter API to easily support the same stubbing
-API for multiple ORMs, mock frameworks and app frameworks.
+Shave a few lines, but leave a little stubble. Stubble makes stubbing ORM
+models in rspec controller specs (or rails functional tests) just a little bit
+easier.
 
 == FEATURES/PROBLEMS:
 
-* Currently unreleased and purely experimental
-* API *will* change at this point
-* Supports very simple stuff for ActiveRecord / RSpec's mocks
+* Currently unreleased and somewhat experimental
+* Only works with RSpec's HEAD (see http://github.com/dchelimsky/rspec)
+  * I'll release 0.0.1 of stubble after the rspec-1.2.7 release, at which
+    point both will be released and work just fine.
+* Simple means of stubbing multiple ActiveRecord class and instance methods
+* Currently only works with RSpec, but can use any of:
+  * RSpec's mocking framework
+  * flexmock
+  * mocha
+  * rr
+* Plan is to get it to work with test/unit as well
+* API *may* change at this point, but it's pretty damned simple
 
 == SYNOPSIS:
 
@@ -39,7 +38,7 @@ end
 
 == USAGE:
 
-By default, stubble model classes are valid. They can be found, created, and
+By default, stubbled model classes are happy. They can be found, created, and
 saved in all number of ways without complaint.
 
   stubbing(Thing) do |thing|
@@ -48,23 +47,25 @@ saved in all number of ways without complaint.
   
 ... stubs all the following:
 
-  Thing.new        => stub_thing
-  Thing.find(id)   => stub_thing
-  Thing.create     => stub_thing
-  Thing.create!    => stub_thing
+  Thing.new                 => thing
+  Thing.find(id)            => thing
+  Thing.find(:first)        => thing
+  Thing.find(:first, *args) => thing
+  Thing.create              => thing
+  Thing.create!             => thing
 
-  Thing.all               => [stub_thing]
-  Thing.all(*args)        => [stub_thing]
-  Thing.find(:all)        => [stub_thing]
-  Thing.find(:all, *args) => [stub_thing]
+  Thing.all                 => [thing]
+  Thing.all(*args)          => [thing]
+  Thing.find(:all)          => [thing]
+  Thing.find(:all, *args)   => [thing]
   
 The instance of Thing is set up with the following stubs:
 
-  stub_thing.valid?             => true
-  stub_thing.save               => true
-  stub_thing.save!              => true
-  stub_thing.update_attributes  => true
-  stub_thing.update_attributes! => true
+  thing.valid?             => true
+  thing.save               => true
+  thing.save!              => true
+  thing.update_attributes  => true
+  thing.update_attributes! => true
   
 You can also tell stubble to create an invalid stub, like so:
 
@@ -79,11 +80,11 @@ of create!
   
 The instance returned is stubbed as follows:
 
-  stub_thing.valid?             => false
-  stub_thing.save               => false
-  stub_thing.save!              => raise ActiveRecord::RecordInvalid
-  stub_thing.update_attributes  => false
-  stub_thing.update_attributes! => raise ActiveRecord::RecordInvalid
+  thing.valid?             => false
+  thing.save               => false
+  thing.save!              => raise ActiveRecord::RecordInvalid
+  thing.update_attributes  => false
+  thing.update_attributes! => raise ActiveRecord::RecordInvalid
 
 === Examples
 
@@ -154,6 +155,7 @@ The following examples will both pass if the controller's update action uses fin
 == REQUIREMENTS:
 
 * activerecord
+* rspec
 
 == INSTALL:
 
