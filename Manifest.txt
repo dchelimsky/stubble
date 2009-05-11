@@ -4,6 +4,12 @@ Manifest.txt
 README.rdoc
 Rakefile
 lib/stubble.rb
+lib/stubble/stubbing.rb
+lib/unimock.rb
+lib/unimock/flexmock.rb
+lib/unimock/mocha.rb
+lib/unimock/rr.rb
+lib/unimock/rspec.rb
 spec/spec.opts
 spec/spec_helper.rb
-spec/stubble_spec.rb
+spec/stubble/stubbing_spec.rb
