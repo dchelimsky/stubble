@@ -35,6 +35,7 @@ module Stubble
   
   def build_stubs(klass, options={}) # :nodoc:
     options = {:as => :valid}.merge(options)
+    options[:id] = options[:id].to_i if options[:id]
     
     instance = klass.new
     stub_and_return(klass, :new, instance)
@@ -43,7 +44,7 @@ module Stubble
 
     if options[:as] == :valid
       instance.extend(ValidModel)
-      stub_and_return(instance, :id, options[:id] ? options[:id].to_i : next_id)
+      stub_and_return(instance, :id, options[:id] || next_id)
       stub_and_return(klass, :create!, instance)
     else
       instance.extend(InvalidModel)

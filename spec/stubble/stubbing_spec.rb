@@ -3,102 +3,76 @@ require File.join(File.dirname(__FILE__), "/../spec_helper")
 class Model
 end
 
-describe "stubble" do
-  describe "class methods" do
-    describe "find()" do
-      it "returns a stubbled instance when given no args" do
-        model = build_stubs(Model)
-        Model.find(model.id).should equal(model)
-      end
-      
-      it "fails to find model with a diff id" do
-        model = build_stubs(Model)
-        lambda do
-          Model.find("42")
-        end.should raise_error(ActiveRecord::RecordNotFound)
-      end
+describe "build_stubs" do
+  context ":as => :valid (default)" do
+    context "class methods" do
+      describe "find()" do
+        it "returns a stubbled instance when given no args" do
+          model = build_stubs(Model)
+          Model.find(model.id).should equal(model)
+        end
 
-      it "returns a stubbled instance when given :id => the same id passed to find" do
-        model = build_stubs(Model, :id => "37")
-        Model.find("37").should equal(model)
-      end
-      
-      it "returns nil given :id => the wrong ID" do
-        model = build_stubs(Model, :id => "37")
-        lambda do
-          Model.find("42")
-        end.should raise_error(ActiveRecord::RecordNotFound)
-      end
-      
-      it "returns a collection with :all" do
-        model = build_stubs(Model)
-        Model.find(:all).should == [model]
-      end
+        it "fails to find model with a diff id" do
+          model = build_stubs(Model)
+          lambda do
+            Model.find(model.id - 1)
+          end.should raise_error(ActiveRecord::RecordNotFound)
+        end
 
-      it "returns a collection with :all with additional args" do
-        model = build_stubs(Model)
-        Model.find(:all, :additional_arg => :whatever).should == [model]
-      end
-    end
-    
-    describe "new()" do
-      it "returns an stubbled instance" do
-        model = build_stubs(Model)
-        Model.new.should equal(model)
-      end
-    end
-    
-    describe "all()" do
-      it "returns a stubbled instance in an array" do
-        model = build_stubs(Model)
-        Model.all.should == [model]
-      end
-    end
-    
-  end
-  
-  context "stubbing" do
-    it "yields the instance" do
-      stubbing(Model) do |model|
-        model.should_not be_nil
-      end
-    end
-    
-    it "tears down the stubs" do
-      model = nil
-      stubbing(Model) do
-        def reset
-          $reset_called = true
+        it "returns a stubbled instance when given :id => the same id passed to find" do
+          model = build_stubs(Model, :id => "37")
+          Model.find("37").should equal(model)
+        end
+
+        it "returns nil given :id => the wrong ID" do
+          model = build_stubs(Model, :id => "37")
+          lambda do
+            Model.find("42")
+          end.should raise_error(ActiveRecord::RecordNotFound)
+        end
+
+        it "returns a collection with :all" do
+          model = build_stubs(Model)
+          Model.find(:all).should == [model]
+        end
+
+        it "returns a collection with :all with additional args" do
+          model = build_stubs(Model)
+          Model.find(:all, :additional_arg => :whatever).should == [model]
         end
       end
-      $reset_called.should be_true
-    end
-  end
-  
-  context "creating" do
-    it "stubs new" do
-      instance = build_stubs(Model)
-      Model.new.should equal(instance)
-    end
-    
-    it "stubs create" do
-      instance = build_stubs(Model)
-      Model.create.should equal(instance)
-    end
-    
-    it "stubs create!" do
-      instance = build_stubs(Model)
-      Model.create!.should equal(instance)
-    end
-    
-    it "raises if valid => false" do
-      build_stubs(Model, :as => :invalid)
-      expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
-    end
-  end
 
-  describe "instances" do
-    context "default (valid)" do
+      describe "new()" do
+        it "returns an stubbled instance" do
+          model = build_stubs(Model)
+          Model.new.should equal(model)
+        end
+      end
+
+      describe "all()" do
+        it "returns a stubbled instance in an array" do
+          model = build_stubs(Model)
+          Model.all.should == [model]
+        end
+      end
+      
+      describe "create()" do
+        it "returns an stubbled instance" do
+          instance = build_stubs(Model)
+          Model.create.should equal(instance)
+        end
+      end
+      
+      describe "create!()" do
+        it "stubs create!" do
+          instance = build_stubs(Model)
+          Model.create!.should equal(instance)
+        end
+      end
+    
+    end
+
+    context "instance methods" do
       def valid_model
         build_stubs(Model)
       end
@@ -139,12 +113,24 @@ describe "stubble" do
         valid_model.valid?.should == true
       end
     end
+
+  end
+
+  context ":as => :invalid" do
+    context "class methods " do
+      describe "create!()" do
+        it "raises ActiveRecord::RecordInvalid" do
+          build_stubs(Model, :as => :invalid)
+          expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
+        end
+      end
+    end
     
-    context "invalid_model" do
+    context "instance methods " do
       def invalid_model
         @invalid_model = build_stubs(Model, :as => :invalid)
       end
-      
+
       it "returns false for save" do
         invalid_model.save.should_not be(true)
       end
@@ -168,10 +154,29 @@ describe "stubble" do
           invalid_model.update_attributes!
         }.should raise_error(ActiveRecord::RecordInvalid)
       end
-      
+
       it "returns false for valid?" do
         invalid_model.valid?.should_not be(true)
       end
     end
+  end
+  
+end
+
+context "stubbing" do
+  it "yields the instance" do
+    stubbing(Model) do |model|
+      model.should_not be_nil
+    end
+  end
+  
+  it "tears down the stubs" do
+    model = nil
+    stubbing(Model) do
+      def reset
+        $reset_called = true
+      end
+    end
+    $reset_called.should be_true
   end
 end
