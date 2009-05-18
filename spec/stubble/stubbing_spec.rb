@@ -8,7 +8,14 @@ describe "stubble" do
     describe "find()" do
       it "returns a stubbled instance when given no args" do
         model = build_stubs(Model)
-        Model.find("37").should equal(model)
+        Model.find(model.id).should equal(model)
+      end
+      
+      it "fails to find model with a diff id" do
+        model = build_stubs(Model)
+        lambda do
+          Model.find("42")
+        end.should raise_error(ActiveRecord::RecordNotFound)
       end
 
       it "returns a stubbled instance when given :id => the same id passed to find" do
@@ -34,14 +41,20 @@ describe "stubble" do
       end
     end
     
-    it "stubs new on the class object, returning an stubbled instance" do
-      model = build_stubs(Model)
-      Model.new.should equal(model)
+    describe "new()" do
+      it "returns an stubbled instance" do
+        model = build_stubs(Model)
+        Model.new.should equal(model)
+      end
     end
-    it "stubs all on the class object, returning an stubbled instance in an array" do
-      model = build_stubs(Model)
-      Model.all.should == [model]
+    
+    describe "all()" do
+      it "returns a stubbled instance in an array" do
+        model = build_stubs(Model)
+        Model.all.should == [model]
+      end
     end
+    
   end
   
   context "stubbing" do
@@ -87,7 +100,19 @@ describe "stubble" do
   describe "instances" do
     context "default (valid)" do
       def valid_model
-        @valid_model = build_stubs(Model)
+        build_stubs(Model)
+      end
+      
+      it "assigns a default id" do
+        valid_model.id.should be_between(1000,1100)
+      end
+      
+      it "assigns a diff default id each time" do
+        build_stubs(Model).id.should == (build_stubs(Model).id - 1)
+      end
+      
+      it "uses the assigned id instead of default" do
+        build_stubs(Model, :id => "37").id.should == 37
       end
       
       it "returns true for save" do

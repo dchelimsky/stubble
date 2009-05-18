@@ -28,7 +28,14 @@ module Stubble
     end
   end
   
-  def build_stubs(klass, options={:as => :valid}) # :nodoc:
+  @@model_id = 1000
+  def next_id
+    @@model_id += 1
+  end
+  
+  def build_stubs(klass, options={}) # :nodoc:
+    options = {:as => :valid}.merge(options)
+    
     instance = klass.new
     stub_and_return(klass, :new, instance)
     stub_and_return(klass, :create, instance)
@@ -36,20 +43,17 @@ module Stubble
 
     if options[:as] == :valid
       instance.extend(ValidModel)
+      stub_and_return(instance, :id, options[:id] ? options[:id].to_i : next_id)
       stub_and_return(klass, :create!, instance)
     else
       instance.extend(InvalidModel)
       stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
     end
 
-    if options[:id]
-      stub_and_invoke(klass, :find) do |*args|
-        args.first.to_i == options[:id].to_i ? instance : (raise ActiveRecord::RecordNotFound.new(instance))
-      end
-    else
-      stub_and_invoke(klass, :find) do |*args|
-        args.first == :all ? [instance] : instance
-      end
+    stub_and_invoke(klass, :find) do |*args|
+      args.first == :all ? [instance] :
+        args.first.to_i == instance.id ? instance :
+          (raise ActiveRecord::RecordNotFound.new(instance))
     end
 
     instance
