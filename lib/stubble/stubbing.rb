@@ -6,6 +6,10 @@ module Stubble
       self.id = id
       self
     end
+    
+    def new_record?
+      !id
+    end
   end
   
   module ValidModel # :nodoc:

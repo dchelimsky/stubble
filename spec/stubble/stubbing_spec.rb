@@ -41,6 +41,11 @@ describe "build_stubs" do
           model = build_stubs(Model)
           Model.find(:all, :additional_arg => :whatever).should == [model]
         end
+        
+        it "returns an instance that says new_record? false" do
+          model = build_stubs(Model)
+          Model.find(model.id).should_not be_new_record
+        end
       end
 
       describe "new()" do
@@ -50,8 +55,13 @@ describe "build_stubs" do
         end
         
         it "assigns a nil id to the instance" do
-          model = build_stubs(Model)
+          build_stubs(Model)
           Model.new.id.should be(nil)
+        end
+        
+        it "returns a new record" do
+          build_stubs(Model)
+          Model.new.should be_new_record
         end
       end
 
