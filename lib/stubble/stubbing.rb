@@ -21,6 +21,7 @@ module Stubble
   end
   
   module InvalidModel # :nodoc:
+    include Unimock
     class << self
       include Unimock
       def extended(model)
@@ -31,6 +32,11 @@ module Stubble
           stub_and_return(model, method, false)
         end
       end
+    end
+    
+    def with_id(id)
+      stub_and_return(self, :id, nil)
+      self
     end
   end
   
@@ -45,16 +51,17 @@ module Stubble
     options[:id] = options[:id].to_i if options[:id]
     
     instance = klass.new
-    stub_and_return(klass, :create, instance)
     stub_and_return(klass, :all, [instance])
 
     if options[:as] == :valid
       instance.extend(ValidModel)
       stub_and_return(instance, :id, options[:id] || next_id)
       stub_and_return(klass, :create!, instance)
+      stub_and_return(klass, :create, instance)
     else
       instance.extend(InvalidModel)
       stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
+      stub_and_invoke(klass, :create) {instance.with_id(nil)}
     end
 
     stub_and_invoke(klass, :new) {instance.with_id(nil)}

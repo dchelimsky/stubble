@@ -145,6 +145,13 @@ describe "build_stubs" do
           expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
+      
+      describe "create()" do
+        it "assigns a nil id to the instance" do
+          build_stubs(Model, :as => :invalid)
+          Model.create.id.should be(nil)
+        end
+      end
     end
     
     context "instance methods " do
