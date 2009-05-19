@@ -27,8 +27,8 @@ namespace :spec do
   ['mocha','rr','flexmock','rspec'].each do |framework|
     desc "using #{framework}"
     task framework do
-      ENV['STUBBLE_MOCK_FRAMEWORK'] = framework
-      puts "************************************\n** running specs against #{ENV['STUBBLE_MOCK_FRAMEWORK']}"
+      ENV['STUB_FRAMEWORK'] = framework
+      puts "************************************\n** running specs against #{ENV['STUB_FRAMEWORK']}"
       system 'spec spec'
     end
   end

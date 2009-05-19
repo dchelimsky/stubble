@@ -1,7 +1,16 @@
 lib = File.expand_path(File.dirname(__FILE__))
 $:.unshift(lib) unless $:.include?(lib)
 
-ENV['STUBBLE_MOCK_FRAMEWORK'] ||= 'rspec'
-
-require "unimock/#{ENV['STUBBLE_MOCK_FRAMEWORK']}"
-require 'stubble/stubbing'
+module Stubble
+  VERSION = '0.0.0'
+  class << self
+    def configure
+      yield Class.new {
+        def stub_with(framework)
+          require "unimock/#{framework}"
+          require 'stubble/stubbing'
+        end
+      }.new
+    end
+  end
+end

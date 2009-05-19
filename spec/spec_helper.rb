@@ -9,10 +9,6 @@ end
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require 'stubble'
 
-Spec::Runner.configure do |c|
-  c.include(Stubble)
-end
-
 unless defined?(ActiveRecord)
   module ActiveRecord
     class RecordInvalid < StandardError
@@ -24,8 +20,14 @@ unless defined?(ActiveRecord)
   end
 end
 
-ENV['STUBBLE_MOCK_FRAMEWORK'] ||= 'rspec'
+ENV['STUB_FRAMEWORK'] ||= 'rspec'
 
-require "unimock/#{ENV['STUBBLE_MOCK_FRAMEWORK']}"
+Stubble.configure do |c|
+  c.stub_with ENV['STUB_FRAMEWORK']
+end
 
-Spec::Runner.configure {|c| c.mock_with ENV['STUBBLE_MOCK_FRAMEWORK'].to_sym}
+Spec::Runner.configure do |c|
+  c.include(Stubble)
+  c.mock_with ENV['STUB_FRAMEWORK'].to_sym
+end
+

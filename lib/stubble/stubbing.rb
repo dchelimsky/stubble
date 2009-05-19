@@ -1,6 +1,4 @@
 module Stubble
-  VERSION = '0.0.0'
-  
   include Unimock
   
   module IdentifiableModel
