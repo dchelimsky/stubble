@@ -1,18 +1,19 @@
 require File.join(File.dirname(__FILE__), "/../spec_helper")
 
 class Model
+  
 end
 
 describe "build_stubs" do
   context ":as => :valid (default)" do
     context "class methods" do
       describe "find()" do
-        it "returns a stubbled instance when given no args" do
+        it "returns a stubbled instance if given the right id" do
           model = build_stubs(Model)
           Model.find(model.id).should equal(model)
         end
 
-        it "fails to find model with a diff id" do
+        it "raises ActiveRecord::RecordNotFound with the wrong id" do
           model = build_stubs(Model)
           lambda do
             Model.find(model.id - 1)
@@ -24,7 +25,7 @@ describe "build_stubs" do
           Model.find("37").should equal(model)
         end
 
-        it "returns nil given :id => the wrong ID" do
+        it "raises ActiveRecord::RecordNotFound given :id => the wrong ID" do
           model = build_stubs(Model, :id => "37")
           lambda do
             Model.find("42")
@@ -47,12 +48,22 @@ describe "build_stubs" do
           model = build_stubs(Model)
           Model.new.should equal(model)
         end
+        
+        it "assigns a nil id to the instance" do
+          model = build_stubs(Model)
+          Model.new.id.should be(nil)
+        end
       end
 
       describe "all()" do
         it "returns a stubbled instance in an array" do
           model = build_stubs(Model)
           Model.all.should == [model]
+        end
+        
+        it "assigns an id to that instance" do
+          model = build_stubs(Model)
+          Model.all.first.id.should be_between(1000,1100)
         end
       end
       
@@ -61,12 +72,22 @@ describe "build_stubs" do
           instance = build_stubs(Model)
           Model.create.should equal(instance)
         end
+
+        it "assigns an id to that instance" do
+          model = build_stubs(Model)
+          Model.create.id.should be_between(1000,1100)
+        end
       end
       
       describe "create!()" do
         it "stubs create!" do
           instance = build_stubs(Model)
           Model.create!.should equal(instance)
+        end
+
+        it "assigns an id to that instance" do
+          model = build_stubs(Model)
+          Model.create!.id.should be_between(1000,1100)
         end
       end
     
