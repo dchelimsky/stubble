@@ -10,19 +10,18 @@ easier.
 
 == FEATURES/PROBLEMS:
 
-* Currently unreleased and somewhat experimental
-* Only works with RSpec's HEAD (see http://github.com/dchelimsky/rspec)
-  * I'll release 0.0.1 of stubble after the rspec-1.2.7 release, at which
-    point both will be released and work just fine.
 * Simple means of stubbing multiple ActiveRecord class and instance methods
-* Currently only works with RSpec, but can use any of:
-  * RSpec's mocking framework
+* Currently unreleased and somewhat experimental
+  * API and underlying functionality are subject to change
+    * Especially while it's not yet released
+* Only works with RSpec's HEAD (see http://github.com/dchelimsky/rspec)
+  * I'll release 0.0.1 of stubble after the rspec-1.2.7 release
+* Works with RSpec or Test::Unit and multiple mock frameworks:
+  * RSpec's mocking framework (RSpec only)
   * flexmock
   * mocha
   * rr
-* Plan is to get it to work with test/unit as well
-* API *may* change at this point, but it's pretty damned simple
-
+  
 == SYNOPSIS:
 
 describe ThingsController do
@@ -35,6 +34,38 @@ describe ThingsController do
     end
   end
 end
+
+== CONFIGURATION:
+
+=== RSpec
+
+in spec_helper:
+
+  require 'stubble'
+  Stubble.configure {|c| c.stub_with(:rspec)}
+  Spec::Runner.configure {|c| c.include(Stubble)}
+  
+If you want to use any other mock framework (:mocha, :flexmock or :rr - example below with :rr):
+
+  require 'stubble'
+  Stubble.configure {|c| c.stub_with(:rr)}
+  Spec::Runner.configure do |c|
+    c.include(Stubble)
+    c.mock_with(:rr)
+  end
+  
+=== Test::Unit
+
+in test_helper.rb
+
+  require 'stubble'
+  Stubble.configure {|c| c.stub_with(:mocha)}
+
+  class ActiveSupport::TestCase
+    include Stubble
+  end
+
+Same setup for :flexmock and :rr. Does not currently work with rspec's mock framework
 
 == USAGE:
 
@@ -64,6 +95,7 @@ The instance of Thing is set up with the following stubs:
   thing.valid?             => true
   thing.save               => true
   thing.save!              => true
+  thing.update_attribute   => true
   thing.update_attributes  => true
   thing.update_attributes! => true
   
@@ -83,6 +115,7 @@ The instance returned is stubbed as follows:
   thing.valid?             => false
   thing.save               => false
   thing.save!              => raise ActiveRecord::RecordInvalid
+  thing.update_attribute   => false
   thing.update_attributes  => false
   thing.update_attributes! => raise ActiveRecord::RecordInvalid
 
@@ -92,7 +125,8 @@ The instance returned is stubbed as follows:
 
 The following examples will both pass if the controller's index action uses:
 
-* find()
+* find(:all)
+* all
 
     describe "things" do
       context "successful GET"
@@ -109,10 +143,12 @@ The following examples will both pass if the controller's index action uses:
 
 The following examples will both pass if the controller's index action uses:
 
-* new()
-* create()
-* create!()
+* new
+* create
+* create!
 * valid?
+* save
+* save!
 
     describe "things" do
       context "successful POST"
