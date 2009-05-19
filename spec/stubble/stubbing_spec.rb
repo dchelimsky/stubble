@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__), "/../spec_helper")
 
 class Model
-  
+  attr_accessor :id
 end
 
 describe "build_stubs" do

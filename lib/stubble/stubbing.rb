@@ -3,8 +3,15 @@ module Stubble
   
   include Unimock
   
+  module IdentifiableModel
+    def with_id(id)
+      self.id = id
+      self
+    end
+  end
+  
   module ValidModel # :nodoc:
-    include Unimock
+    include IdentifiableModel
     class << self
       include Unimock
       def extended(model)
@@ -13,15 +20,10 @@ module Stubble
         end
       end
     end
-    
-    def with_id(id)
-      stub_and_return(self, :id, nil)
-      self
-    end
   end
   
   module InvalidModel # :nodoc:
-    include Unimock
+    include IdentifiableModel
     class << self
       include Unimock
       def extended(model)
@@ -33,11 +35,6 @@ module Stubble
         end
       end
     end
-    
-    def with_id(id)
-      stub_and_return(self, :id, nil)
-      self
-    end
   end
   
   @@model_id = 1000
@@ -48,27 +45,25 @@ module Stubble
   
   def build_stubs(klass, options={}) # :nodoc:
     options = {:as => :valid}.merge(options)
-    options[:id] = options[:id].to_i if options[:id]
+    instance_id = options[:id] ? options[:id].to_i : next_id
     
     instance = klass.new
-    stub_and_return(klass, :all, [instance])
 
     if options[:as] == :valid
       instance.extend(ValidModel)
-      stub_and_return(instance, :id, options[:id] || next_id)
-      stub_and_return(klass, :create!, instance)
-      stub_and_return(klass, :create, instance)
+      stub_and_invoke(klass, :create) {instance.with_id(instance_id)}
+      stub_and_invoke(klass, :create!) {instance.with_id(instance_id)}
     else
       instance.extend(InvalidModel)
-      stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
       stub_and_invoke(klass, :create) {instance.with_id(nil)}
+      stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
     end
 
     stub_and_invoke(klass, :new) {instance.with_id(nil)}
-
+    stub_and_return(klass, :all, [instance.with_id(instance_id)])
     stub_and_invoke(klass, :find) do |*args|
-      args.first == :all ? [instance] :
-        args.first.to_i == instance.id ? instance :
+      args.first == :all ? [instance.with_id(instance_id)] :
+        args.first.to_i == instance_id ? instance.with_id(instance_id) :
           (raise ActiveRecord::RecordNotFound.new(instance))
     end
 
