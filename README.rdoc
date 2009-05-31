@@ -205,8 +205,17 @@ The following examples will both pass if the controller's update action uses fin
 in spec_helper.rb
 
     require 'stubble'
+    Stubble.configure {|stubble| stubble.stub_with :rspec} # or mocha, rr, flexmock
     Spec::Runner.configure {|c| c.include(Stubble, :type => :controller)}
     
+in test_helper.rb # if you're using test/unit or any of its extensions
+    
+  require 'stubble'
+  Stubble.configure {|stubble| stubble.stub_with :mocha} # or rr, flexmock
+  class ActionController::TestCase
+    include Stubble
+  end
+
 == LICENSE:
 
 (The MIT License)
