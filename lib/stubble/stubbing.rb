@@ -1,4 +1,7 @@
 module Stubble
+  class ParameterMismatchError < StandardError
+  end
+  
   include Unimock
   
   module IdentifiableModel
@@ -53,15 +56,15 @@ module Stubble
 
     if options[:as] == :valid
       instance.extend(ValidModel)
-      stub_and_invoke(klass, :create) {instance.with_id(instance_id)}
-      stub_and_invoke(klass, :create!) {instance.with_id(instance_id)}
+      stub_and_invoke(klass, :create) {|*params| generate_instance(instance.with_id(instance_id), options, params.first)}
+      stub_and_invoke(klass, :create!) {|*params| generate_instance(instance.with_id(instance_id), options, params.first)}
     else
       instance.extend(InvalidModel)
       stub_and_invoke(klass, :create) {instance.with_id(nil)}
       stub_and_raise(klass, :create!, ActiveRecord::RecordInvalid.new(instance))
     end
 
-    stub_and_invoke(klass, :new) {instance.with_id(nil)}
+    stub_and_invoke(klass, :new) {|*params| generate_instance(instance.with_id(nil), options, params.first)}
     stub_and_return(klass, :all, [instance.with_id(instance_id)])
     stub_and_invoke(klass, :find) do |*args|
       args.first == :all ? [instance.with_id(instance_id)] :
@@ -70,6 +73,21 @@ module Stubble
     end
 
     instance
+  end
+  
+  def generate_instance(instance, opts, params)
+    if opts[:params]
+      expected, actual = stringify_keys(opts[:params]), stringify_keys(params)
+      raise ParameterMismatchError.new("Expected params: #{expected.inspect}\n            got: #{actual.inspect}") unless expected == actual
+    end
+    return instance
+  end
+  
+  def stringify_keys(hash)
+    hash.inject({}) do |options, (key, value)|
+      options[key.to_s] = value
+      options
+    end
   end
   
   # :call-seq:

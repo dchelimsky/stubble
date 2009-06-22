@@ -4,6 +4,33 @@ class Model
   attr_accessor :id
 end
 
+def raises_when_params_dont_match(method)
+  context "with params defined" do
+    context "and expected params received with symbol keys" do
+      it "builds normally" do
+        model = build_stubs(Model, :params => {:this => :that})
+        Model.__send__(method, :this => :that)
+      end
+    end
+
+    context "and expected params received with string keys" do
+      it "builds normally" do
+        model = build_stubs(Model, :params => {:this => :that})
+        Model.__send__(method, 'this' => :that)
+      end
+    end
+
+    context "but expected params not received" do
+      it "raises" do
+        model = build_stubs(Model, :params => {:this => :that})
+        expect do
+          Model.__send__(method, :this => :other)
+        end.to raise_error(Stubble::ParameterMismatchError, "Expected params: {\"this\"=>:that}\n            got: {\"this\"=>:other}")
+      end
+    end
+  end
+end
+
 describe "build_stubs" do
   context ":as => :valid (default)" do
     context "class methods" do
@@ -41,27 +68,10 @@ describe "build_stubs" do
           model = build_stubs(Model)
           Model.find(:all, :additional_arg => :whatever).should == [model]
         end
-        
+
         it "returns an instance that says new_record? false" do
           model = build_stubs(Model)
           Model.find(model.id).should_not be_new_record
-        end
-      end
-
-      describe "new()" do
-        it "returns an stubbled instance" do
-          model = build_stubs(Model)
-          Model.new.should equal(model)
-        end
-        
-        it "assigns a nil id to the instance" do
-          build_stubs(Model)
-          Model.new.id.should be(nil)
-        end
-        
-        it "returns a new record" do
-          build_stubs(Model)
-          Model.new.should be_new_record
         end
       end
 
@@ -70,14 +80,35 @@ describe "build_stubs" do
           model = build_stubs(Model)
           Model.all.should == [model]
         end
-        
+
         it "assigns an id to that instance" do
           model = build_stubs(Model)
           Model.all.first.id.should be_between(1000,1100)
         end
       end
-      
+
+      describe "new()" do
+        raises_when_params_dont_match :new
+
+        it "returns an stubbled instance" do
+          model = build_stubs(Model)
+          Model.new.should equal(model)
+        end
+
+        it "assigns a nil id to the instance" do
+          build_stubs(Model)
+          Model.new.id.should be(nil)
+        end
+
+        it "returns a new record" do
+          build_stubs(Model)
+          Model.new.should be_new_record
+        end
+      end
+
       describe "create()" do
+        raises_when_params_dont_match :create
+
         it "returns an stubbled instance" do
           instance = build_stubs(Model)
           Model.create.should equal(instance)
@@ -88,8 +119,10 @@ describe "build_stubs" do
           Model.create.id.should be_between(1000,1100)
         end
       end
-      
+
       describe "create!()" do
+        raises_when_params_dont_match :create!
+
         it "stubs create!" do
           instance = build_stubs(Model)
           Model.create!.should equal(instance)
@@ -100,26 +133,26 @@ describe "build_stubs" do
           Model.create!.id.should be_between(1000,1100)
         end
       end
-    
+
     end
 
     context "instance methods" do
       def valid_model
         build_stubs(Model)
       end
-      
+
       it "assigns a default id" do
         valid_model.id.should be_between(1000,1100)
       end
-      
+
       it "assigns a diff default id each time" do
         build_stubs(Model).id.should == (build_stubs(Model).id - 1)
       end
-      
+
       it "uses the assigned id instead of default" do
         build_stubs(Model, :id => "37").id.should == 37
       end
-      
+
       it "returns true for save" do
         valid_model.save.should == true
       end
@@ -139,7 +172,7 @@ describe "build_stubs" do
       it "returns true for update_attributes!" do
         valid_model.update_attributes!.should == true
       end
-      
+
       it "returns true for valid?" do
         valid_model.valid?.should == true
       end
@@ -155,7 +188,7 @@ describe "build_stubs" do
           expect { Model.create! }.to raise_error(ActiveRecord::RecordInvalid)
         end
       end
-      
+
       describe "create()" do
         it "assigns a nil id to the instance" do
           build_stubs(Model, :as => :invalid)
@@ -163,7 +196,7 @@ describe "build_stubs" do
         end
       end
     end
-    
+
     context "instance methods " do
       def invalid_model
         @invalid_model = build_stubs(Model, :as => :invalid)
@@ -198,7 +231,7 @@ describe "build_stubs" do
       end
     end
   end
-  
+
 end
 
 context "stubbing" do
@@ -207,7 +240,7 @@ context "stubbing" do
       model.should_not be_nil
     end
   end
-  
+
   it "tears down the stubs" do
     model = nil
     stubbing(Model) do
