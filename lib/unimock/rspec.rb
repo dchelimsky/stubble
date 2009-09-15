@@ -10,7 +10,7 @@ module Unimock
   def stub_and_invoke(obj, method, &block)
     obj.stub(method, &block)
   end
-
+  
   def reset
     $rspec_mocks.reset_all
   end

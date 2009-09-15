@@ -28,6 +28,15 @@ def raises_when_params_dont_match(method)
         end.to raise_error(Stubble::ParameterMismatchError, "Expected params: {\"this\"=>:that}\n            got: {\"this\"=>:other}")
       end
     end
+    
+    context "but no creation method is received" do
+      it "raises" do
+        model = build_stubs(Model, :params => {:this => :that})
+        expect {__verify_stubble}.to raise_error(
+          Stubble::NoAccessError
+        )
+      end
+    end
   end
 end
 
@@ -237,17 +246,77 @@ end
 context "stubbing" do
   it "yields the instance" do
     stubbing(Model) do |model|
+      Model.create # to suppress NoAccessError
       model.should_not be_nil
     end
   end
-
+ 
   it "tears down the stubs" do
     model = nil
     stubbing(Model) do
+      Model.create # to suppress NoAccessError
       def reset
         $reset_called = true
       end
     end
     $reset_called.should be_true
+  end
+  
+  context "as valid" do
+    context "with new call" do
+      it "does not raise NoAccess" do
+        stubbing(Model) do |model|
+          Model.new
+        end
+      end
+    end
+    context "with find call" do
+      it "does not raise NoAccess" do
+        stubbing(Model) do |model|
+          Model.find(model.id)
+        end
+      end
+    end
+    context "with all call" do
+      it "does not raise NoAccess" do
+        stubbing(Model) do |model|
+          Model.all
+        end
+      end
+    end
+    context "with create call" do
+      it "does not raise NoAccess" do
+        stubbing(Model) do |model|
+          Model.create
+        end
+      end
+    end
+    context "with create! call" do
+      it "does not raise NoAccess" do
+        stubbing(Model) do |model|
+          Model.create!
+        end
+      end
+    end
+  end
+
+  context "as invalid" do
+    context "with create call" do
+      it "does not raise NoAccess" do
+        stubbing(Model, :as => :invalid) do |model|
+          Model.create
+        end
+      end
+    end
+    context "with create! call" do
+      it "does not raise NoAccess" do
+        stubbing(Model, :as => :invalid) do |model|
+          begin
+            Model.create!
+          rescue ActiveRecord::RecordInvalid
+          end
+        end
+      end
+    end
   end
 end

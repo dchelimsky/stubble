@@ -20,7 +20,7 @@ module Mocha
 end
 
 module Unimock
-  include Mocha::Standalone
+  include Mocha::API
   
   def stub_and_return(obj, method, value)
     obj.stubs(method).returns(value)
