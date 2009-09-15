@@ -1,8 +1,9 @@
-%w[rubygems hoe].each { |f| require f }
+require 'hoe'
 require File.dirname(__FILE__) + '/lib/stubble'
 
-Hoe.new('stubble', Stubble::VERSION) do |p|
-  p.developer 'David Chelimsky','dchelimsky@gmail.com'
+Hoe.spec('stubble') do |p|
+  developer 'David Chelimsky','dchelimsky@gmail.com'
+  p.version = Stubble::VERSION
   p.summary = "stubble-#{Stubble::VERSION}"
   p.description = 'Tools to make stubbing ORM models just a little bit easier.'
   p.url = 'http://github.com/dchelimsky/stubble'
