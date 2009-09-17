@@ -20,6 +20,30 @@ Feature: stub find all
       end
       """
 
+  Scenario: pass with all()
+    Given "app/controllers/things_controller.rb" with
+      """
+      class ThingsController < ApplicationController
+        def index
+          @things = Thing.all
+        end
+      end
+      """
+    When I run "spec/controllers/things_controller_spec.rb"
+    Then I should see "0 failures"
+
+  Scenario: pass with find(:all)
+    Given "app/controllers/things_controller.rb" with
+      """
+      class ThingsController < ApplicationController
+        def index
+          @things = Thing.find(:all)
+        end
+      end
+      """
+    When I run "spec/controllers/things_controller_spec.rb"
+    Then I should see "0 failures"
+
   Scenario: fail on no index action
     Given "app/controllers/things_controller.rb" with
       """
@@ -28,5 +52,31 @@ Feature: stub find all
       """
     When I run "spec/controllers/things_controller_spec.rb"
     Then I should see "No action responded to index"
+    And I should see "1 failure"
+
+@wip
+  Scenario: fail on no access to model
+    Given "app/controllers/things_controller.rb" with
+      """
+      class ThingsController < ApplicationController
+        def index
+        end
+      end
+      """
+    When I run "spec/controllers/things_controller_spec.rb"
+    Then I should see "No access to model"
+    And I should see "1 failure"
+
+  Scenario: fail on no assignment
+    Given "app/controllers/things_controller.rb" with
+      """
+      class ThingsController < ApplicationController
+        def index
+          Thing.all
+        end
+      end
+      """
+    When I run "spec/controllers/things_controller_spec.rb"
+    Then I should see "got nil"
     And I should see "1 failure"
 
