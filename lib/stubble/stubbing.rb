@@ -19,7 +19,7 @@ module Stubble
     end
 
     def new_record?
-      !id
+      id.nil?
     end
   end
 
