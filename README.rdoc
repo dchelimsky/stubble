@@ -24,16 +24,16 @@ easier.
   
 == SYNOPSIS:
 
-describe ThingsController do
-  context "PUT with valid attributes"
-    it "redirects to the things index" do
-      stubbing(Thing) do
-        put :update
-        response.should redirect_to(things_path)
+  describe ThingsController do
+    context "PUT with valid attributes"
+      it "redirects to the things index" do
+        stubbing(Thing) do
+          put :update
+          response.should redirect_to(things_path)
+        end
       end
     end
   end
-end
 
 == CONFIGURATION:
 
